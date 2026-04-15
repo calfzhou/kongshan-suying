@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="996" height="770" viewBox="0 0 996 770">
+
+  <rect width="996" height="770" fill="white"/>
+
+  <defs>
+    <!--
+      Image processing: scale to 790w (keep ratio), remove bottom 135px, crop 548px from bottom.
+      Source: 1206x2622 -> scaled 790x1718, remove bottom 135 -> 1583, crop bottom 548 -> skip top 1035.
+      Visible region: 790x548, placed at (103, 152)-(893, 700). Bottom margin 70px.
+    -->
+    <clipPath id="img-clip">
+      <rect x="103" y="152" width="790" height="548"/>
+    </clipPath>
+
+    <!-- Mask: hide bottom-left triangle of light image to reveal dark underneath -->
+    <mask id="light-mask">
+      <polygon points="103,152 893,152 893,700" fill="white"/>
+    </mask>
+  </defs>
+
+  <!-- Title text -->
+  <text x="103" y="80" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif"
+        font-size="52" font-weight="600" fill="#333" dominant-baseline="middle">
+    空山素影 - calf 定制版
+  </text>
+
+  <!-- Version placeholder (replace content during PNG conversion) -->
+  <text id="version" x="893" y="80" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif"
+        font-size="36" font-weight="400" fill="#999" dominant-baseline="middle" text-anchor="end">
+    vX.Y
+  </text>
+
+  <!-- Dark image (bottom layer): scaled 790x1718, positioned so visible 548px aligns with clip -->
+  <image xlink:href="dark.png" x="103" y="-883"
+         width="790" height="1718"
+         clip-path="url(#img-clip)"/>
+
+  <!-- Light image (top layer, masked to upper-right triangle) -->
+  <image xlink:href="light.png" x="103" y="-883"
+         width="790" height="1718"
+         clip-path="url(#img-clip)" mask="url(#light-mask)"/>
+
+</svg>
