@@ -38,6 +38,7 @@ $(CSKIN_OUT): jsonnet $(PNG_OUT) README.md
 	@cp config.yaml $(PNG_OUT) README.md $(SKIN_DIR)/
 	@cp light/*.yaml $(SKIN_DIR)/light/
 	@cp dark/*.yaml $(SKIN_DIR)/dark/
+	@cp -r jsonnet $(SKIN_DIR)/
 	zip -r $(CSKIN_OUT) $(SKIN_DIR)
 	@rm -rf $(SKIN_DIR)
 	@echo "Built $(CSKIN_OUT)"
