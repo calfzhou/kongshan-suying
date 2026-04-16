@@ -46,33 +46,19 @@ jobs:
         run: |
           set -euo pipefail
           current_tag="${GITHUB_REF_NAME}"
-          tag_notes=""
           tag_object_type="$(git cat-file -t "refs/tags/${current_tag}" 2>/dev/null || true)"
-          if [ "$tag_object_type" = "tag" ]; then
-            tag_notes="$(git for-each-ref "refs/tags/${current_tag}" --format='%(contents)')"
+          if [ "$tag_object_type" != "tag" ]; then
+            echo "::error::Tag ${current_tag} is not an annotated tag (object type: ${tag_object_type:-unknown}). Recreate it with: git tag -a ${current_tag} -m 'release notes' && git push origin ${current_tag}"
+            exit 1
           fi
 
-          if printf '%s' "$tag_notes" | grep -q '[^[:space:]]'; then
-            echo "Using annotated tag message as release notes."
-            body="$tag_notes"
-          else
-            echo "Annotated tag message not found (tag object type: ${tag_object_type:-unknown}); using commit-range summary."
-            previous_tag="$(git describe --tags --abbrev=0 "${current_tag}^" 2>/dev/null || true)"
-            if [ -n "$previous_tag" ]; then
-              range="${previous_tag}..${current_tag}"
-              header="## Changes (${previous_tag} -> ${current_tag})"
-            else
-              range="${current_tag}"
-              header="## Changes (${current_tag})"
-            fi
-
-            notes="$(git log --no-merges --pretty='- %s (%h)' ${range})"
-            if [ -z "$notes" ]; then
-              notes="- No commit summary available in this range."
-            fi
-
-            body="${header}\n\n${notes}"
+          tag_notes="$(git for-each-ref "refs/tags/${current_tag}" --format='%(contents)')"
+          if ! printf '%s' "$tag_notes" | grep -q '[^[:space:]]'; then
+            echo "::error::Annotated tag ${current_tag} has an empty message. Add release notes to the tag annotation."
+            exit 1
           fi
+          echo "Using annotated tag message as release notes."
+          body="$tag_notes"
 
           {
             echo 'body<<EOF'
