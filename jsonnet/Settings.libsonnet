@@ -21,7 +21,7 @@
   # 9 : 九宫格布局
   # row : 数字显示在一行
   # hex : 十六进制布局
-  numericLayout: '9',
+  numericLayout: 'row',
 
 
   # 输入时空格键上的内容，支持固定内容和变量
@@ -57,7 +57,7 @@
   # bottom       ⬇️正下方
   # bottomRight  ↘️右下角
   swipeUpTextCenter: 'top',
-  swipeDownTextCenter: 'hide',
+  swipeDownTextCenter: 'bottom',
 
 
   # toolbar 按钮配置
@@ -79,7 +79,7 @@
   # 26-左移  27-右移
   #
   # 将上述代号填入下面的数组即可
-  toolbarSlideButtons: [ 8, 17, 1, 2, 3, 10, 12 ],
+  toolbarSlideButtons: [ 8, 9, 17, 10, 10, 18 ],
 
   # 滑动按钮区域占几个按键宽度
   toolbarSlideButtonsMaxCount: {
@@ -95,7 +95,7 @@
 
   # 主题色
   # 0-无  1-红色  2-绿色  3-橙色  4-蓝色  5-紫色
-  accentColor: 4,
+  accentColor:2,
 
 
   # 中文模式下，字母键是否大写显示

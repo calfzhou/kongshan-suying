@@ -44,6 +44,26 @@ local getKeyboardActionText(params={}, key='action', isUppercase=false) =
 // 按优先级生成样式
 // 此函数特别重要！错误地改动可能导致按键显示异常
 // 请勿随意改动此函数，除非你非常清楚自己在做什么
+
+// 根据 params 里的字符从 Colors 的 custom 配置中抓取颜色
+// [BasicStyle.libsonnet] 修改后的取色函数
+local getButtonNormalColor(params) =
+  local action = if std.objectHas(params, 'action') then params.action else null;
+// 核心改进：同时兼容 character 和 symbol
+  local char = if std.isObject(action) then (
+                 if std.objectHas(action, 'character') then action.character
+                 else if std.objectHas(action, 'symbol') then action.symbol
+                 else null
+               ) else null;
+
+  // 匹配自定义颜色表
+  if char != null && std.objectHas(colors.standardButtonBackgroundColor.custom, char) then
+    colors.standardButtonBackgroundColor.custom[char]
+  else
+colors.standardButtonBackgroundColor.custom.default;
+
+
+
 local newStyleByPriority(isDark=false, params={}, highPriorityParams={}, systemImageParams={}, assetImageParams={}, textParams={}) =
   local tryAddTextInHighPriorityParams = getKeyboardActionText(highPriorityParams);
   if std.objectHas(highPriorityParams, 'systemImageName') && settings.preferIcon then
@@ -80,15 +100,20 @@ local newKeyboardBackgroundStyle(isDark=false, params={}) = {
 // 浮动键盘按钮背景样式
 local floatingKeyboardButtonBackgroundStyleName = 'floatingKeyboardButtonBackgroundStyle';
 local newFloatingKeyboardButtonBackgroundStyle(isDark=false, params={}) = {
-  [floatingKeyboardButtonBackgroundStyleName]: utils.newGeometryStyle({
-    insets: toolbarParams.floatingKeyboard.button.backgroundInsets.portrait,
-    normalColor: colors.standardButtonBackgroundColor,
-    highlightColor: colors.standardButtonHighlightedBackgroundColor,
-    cornerRadius: buttonCornerRadius,
-    normalLowerEdgeColor: colors.lowerEdgeOfButtonNormalColor,
-    highlightLowerEdgeColor: colors.lowerEdgeOfButtonHighlightColor,
-  } + params, isDark),
+  [floatingKeyboardButtonBackgroundStyleName]: utils.newGeometryStyle(
+    {
+      insets: toolbarParams.floatingKeyboard.button.backgroundInsets.portrait,
+      normalColor: getButtonNormalColor(params), // 使用我们定义的动态取色函数
+      highlightColor: colors.standardButtonHighlightedBackgroundColor,
+      cornerRadius: buttonCornerRadius,
+      normalLowerEdgeColor: colors.lowerEdgeOfButtonNormalColor,
+      highlightLowerEdgeColor: colors.lowerEdgeOfButtonHighlightColor,
+    } + params, // 确保 params 在此处合并，覆盖默认值
+    isDark
+  ),
 };
+
+
 
 // 字母键按键动画名称
 local buttonAnimationName = 'scaleAnimation';
@@ -103,19 +128,19 @@ local newButtonAnimation() = {
 };
 
 // 字母键按钮背景样式
+// [修改点 2] 让背景样式函数支持动态颜色
 local alphabeticButtonBackgroundStyleName = 'alphabeticButtonBackgroundStyle';
 local newAlphabeticButtonBackgroundStyle(isDark=false, params={}) =
-  assert std.objectHas(params, 'insets') : '必须提供 insets 参数';
-{
-  [alphabeticButtonBackgroundStyleName]: utils.newGeometryStyle({
-    normalColor: colors.standardButtonBackgroundColor,
-    highlightColor: colors.standardButtonHighlightedBackgroundColor,
-    cornerRadius: buttonCornerRadius,
-    normalLowerEdgeColor: colors.lowerEdgeOfButtonNormalColor,
-    highlightLowerEdgeColor: colors.lowerEdgeOfButtonHighlightColor,
-  } + params, isDark),
-};
-
+  {
+    [alphabeticButtonBackgroundStyleName]: utils.newGeometryStyle({
+      // 关键：调用上面的 getButtonNormalColor 动态获取颜色
+      normalColor: getButtonNormalColor(params),
+      highlightColor: colors.standardButtonHighlightedBackgroundColor,
+      cornerRadius: buttonCornerRadius,
+      normalLowerEdgeColor: colors.lowerEdgeOfButtonNormalColor,
+      highlightLowerEdgeColor: colors.lowerEdgeOfButtonHighlightColor,
+    } + params, isDark),
+  };
 // 字母键按钮前景样式
 local newAlphabeticButtonForegroundStyle(isDark=false, params={}, highPriorityParams={}) =
   newStyleByPriority(isDark, params, highPriorityParams,
@@ -257,17 +282,15 @@ local newLongPressSymbolsSelectedBackgroundStyle(isDark=false, params={}) = {
 // 系统功能键按钮背景样式
 local systemButtonBackgroundStyleName = 'systemButtonBackgroundStyle';
 local newSystemButtonBackgroundStyle(isDark=false, params={}) =
-  assert std.objectHas(params, 'insets') : '必须提供 insets 参数';
-{
-  [systemButtonBackgroundStyleName]: utils.newGeometryStyle({
-    normalColor: colors.systemButtonBackgroundColor,
-    highlightColor: colors.systemButtonHighlightedBackgroundColor,
-    cornerRadius: buttonCornerRadius,
-    normalLowerEdgeColor: colors.lowerEdgeOfButtonNormalColor,
-    highlightLowerEdgeColor: colors.lowerEdgeOfButtonHighlightColor,
-  } + params, isDark),
-};
-
+  {
+    [systemButtonBackgroundStyleName]: utils.newGeometryStyle({
+      normalColor: colors.systemButtonBackgroundColor,
+      highlightColor: colors.systemButtonHighlightedBackgroundColor,
+      cornerRadius: buttonCornerRadius,
+      normalLowerEdgeColor: colors.lowerEdgeOfButtonNormalColor,
+      highlightLowerEdgeColor: colors.lowerEdgeOfButtonHighlightColor,
+    } + params, isDark),
+  };
 // 系统键按钮前景样式
 local newSystemButtonForegroundStyle(isDark=false, params={}, highPriorityParams={}) =
   newStyleByPriority(isDark, params, highPriorityParams,
@@ -291,7 +314,6 @@ local newSystemButtonForegroundStyle(isDark=false, params={}, highPriorityParams
 // 彩色功能键按钮背景样式
 local colorButtonBackgroundStyleName = 'colorButtonBackgroundStyle';
 local newColorButtonBackgroundStyle(isDark=false, params={}) =
-  assert std.objectHas(params, 'insets') : '必须提供 insets 参数';
 {
   [colorButtonBackgroundStyleName]: utils.newGeometryStyle({
     normalColor: colors.colorButtonBackgroundColor,
@@ -423,22 +445,29 @@ local newButton(name, type='alphabetic', isDark=false, params={}) =
   reference: {},   // 按钮内的相关引用定义
   globalNames: [], // 引用全局名称列表
 
-  AddBackgroundStyle():
-    local hasBackgroundName = std.objectHas(root.params, 'backgroundStyleName');
-    local hasBackgroundStyle = std.objectHas(root.params, 'backgroundStyle');
+// [修改点 3] 让每个按键构建时生成私有的背景样式
+// 在 local newButton 的定义内部
+AddBackgroundStyle():
+  local hasBackgroundStyle = std.objectHas(root.params, 'backgroundStyle');
   root {
-    [root.name]+:
-      if hasBackgroundName then
-        assert std.type(root.params.backgroundStyleName) == 'string' : 'backgroundStyleName 必须是字符串，当前为' + root.params.backgroundStyleName;
-        { backgroundStyle: root.params.backgroundStyleName }
-      else
-        { backgroundStyle: root.type + 'ButtonBackgroundStyle' },
+    [root.name]+: {
+      backgroundStyle: if hasBackgroundStyle then root.params.backgroundStyle else root.name + 'Background'
+    },
     reference+:
-      if hasBackgroundStyle then
-        assert std.type(root.params.backgroundStyle) == 'object' : 'backgroundStyle 必须是一个对象，当前为' + root.params.backgroundStyle;
-        root.params.backgroundStyle
-      else {}
+      if hasBackgroundStyle then {}
+      else if root.type == 'alphabetic' then
+        local bgObj = newAlphabeticButtonBackgroundStyle(root.isDark, root.params);
+        { [root.name + 'Background']: bgObj[alphabeticButtonBackgroundStyleName] }
+      else if root.type == 'system' then
+        // 关键：这里会调用上面删掉断言后的函数
+        local bgObj = newSystemButtonBackgroundStyle(root.isDark, root.params);
+        { [root.name + 'Background']: bgObj[systemButtonBackgroundStyleName] }
+      else if root.type == 'color' then
+        local bgObj = newColorButtonBackgroundStyle(root.isDark, root.params);
+        { [root.name + 'Background']: bgObj[colorButtonBackgroundStyleName] }
+      else {},
   },
+
 
   AddForegroundStyle(newButtonForegroundStyle):
     local hasForegroundName = std.objectHas(root.params, 'foregroundStyleName');
@@ -1128,4 +1157,5 @@ local returnKeyTypeChangedNotification =
   // notification
   rimeSchemaChangedNotification: rimeSchemaChangedNotification,
   returnKeyTypeChangedNotification: returnKeyTypeChangedNotification,
+  candidateHighlightColor: colors.standardButtonBackgroundColor.custom.q,
 }

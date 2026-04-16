@@ -64,33 +64,25 @@ local keyboardLayout = {
 local getAlphabeticButtonSize(name) =
   local extra = {
     [buttons.aButton.name]: {
-      size:
-        { width: '1.5/7' },
-      bounds:
-        { width: '1/1.5', alignment: 'right' },
+      size: { width: '1.5/7' },
+      bounds: { width: '1/1.5', alignment: 'right' },
     },
     [buttons.lButton.name]: {
-      size:
-        { width: '1.5/7' },
-      bounds:
-        { width: '1/1.5', alignment: 'left' },
+      size: { width: '1.5/7' },
+      bounds: { width: '1/1.5', alignment: 'left' },
     },
   };
-  (
-  if std.objectHas(extra, name) then
-    extra[name]
-  else
-    {}
-  );
+  (if std.objectHas(extra, name) then extra[name] else {});
 
 local newKeyLayout(isDark=false, isPortrait=true) =
+  local insets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
   {
     keyboardHeight: if isPortrait then commonButtons.keyboardHeight.portrait else commonButtons.keyboardHeight.landscape,
     keyboardStyle: utils.newBackgroundStyle(style=basicStyle.keyboardBackgroundStyleName),
   }
   + keyboardLayout
 
-  // letter Buttons
+  // 1. 字母按键区：通过循环为每个按键生成独立的背景样式
   + std.foldl(function(acc, button)
       acc +
       basicStyle.newAlphabeticButton(
@@ -98,55 +90,62 @@ local newKeyLayout(isDark=false, isPortrait=true) =
         isDark,
         getAlphabeticButtonSize(button.name) + button.params + basicStyle.hintStyleSize + basicStyle.textCenterWhenShowSwipeText +
         {
+          insets: insets, // 必须传递边距，BasicStyle 内部会通过 params 生成背景
           [if settings.uppercaseForChinese then 'text']: std.asciiUpper(button.params.text)
         }),
       buttons.letterButtons,
       {})
 
-  // Third Row
+  // 2. 第三行系统按键
   + basicStyle.newSystemButton(
     commonButtons.shiftButton.name,
     isDark,
-    commonButtons.shiftButton.params
+    { insets: insets } + commonButtons.shiftButton.params
   )
-
   + basicStyle.newSystemButton(
     commonButtons.backspaceButton.name,
     isDark,
-    commonButtons.backspaceButton.params,
+    { insets: insets } + commonButtons.backspaceButton.params,
   )
 
-  // Fourth Row
+  // 3. 第四行功能按键
   + basicStyle.newSystemButton(
     commonButtons.numericButton.name,
     isDark,
-    { size: { width: { percentage: 0.2 } } }
+    { size: { width: { percentage: 0.2 } }, insets: insets }
     + commonButtons.numericButton.params
   )
 
   + basicStyle.newAlphabeticButton(
     commonButtons.commaButton.name,
     isDark,
-    { size: { width: { percentage: 0.12 } } }
+    {
+      size: { width: { percentage: 0.12 } },
+      insets: insets,
+      action: { character: 'q' } // 逗号未定义颜色时，强制指向 custom.q
+    }
     + commonButtons.commaButton.params + basicStyle.hintStyleSize,
     swipeTextFollowSetting=false,
   )
+
   + basicStyle.newAlphabeticButton(
     commonButtons.spaceButton.name,
     isDark,
-    basicStyle.newSpaceButtonForegroundStyle(commonButtons.spaceButton.params, '$rimeSchemaName', isDark),
+    { insets: insets } + basicStyle.newSpaceButtonForegroundStyle(commonButtons.spaceButton.params, '$rimeSchemaName', isDark),
     needHint=false,
   )
+
   + basicStyle.newSystemButton(
     commonButtons.alphabeticButton.name,
     isDark,
-    { size: { width: { percentage: 0.12 } } }
+    { size: { width: { percentage: 0.12 } }, insets: insets }
     + commonButtons.alphabeticButton.params
   )
+
   + basicStyle.newColorButton(
     commonButtons.enterButton.name,
     isDark,
-    { size: { width: { percentage: 0.22 } } }
+    { size: { width: { percentage: 0.22 } }, insets: insets }
     + commonButtons.enterButton.params
   )
 ;
@@ -162,7 +161,8 @@ local newKeyLayout(isDark=false, isPortrait=true) =
     preedit.new(isDark)
     + toolbar.new(isDark, isPortrait)
     + basicStyle.newKeyboardBackgroundStyle(isDark)
-    + basicStyle.newAlphabeticButtonBackgroundStyle(isDark, extraParams)
+    // 【修改核心】：移除了全局的 newAlphabeticButtonBackgroundStyle
+    // 因为现在字母键的背景色是动态私有的，在 newKeyLayout 循环中生成
     + basicStyle.newSystemButtonBackgroundStyle(isDark, extraParams)
     + basicStyle.newColorButtonBackgroundStyle(isDark, extraParams)
     + basicStyle.newAlphabeticHintBackgroundStyle(isDark, { cornerRadius: 10 })

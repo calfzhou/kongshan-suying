@@ -1,10 +1,6 @@
 # =====================================
-# 此文件用于自定义键盘按键功能。
-# 可根据需要修改下方内容，调整各类按键的行为
-# 修改完成后，保存本文件，然后回到皮肤界面，
-# 长按皮肤，选择「运行 main.jsonnet」生效。
-#
-# 包含九宫格数字键盘和行式数字键盘中的按键
+# 此文件用于自定义数字键盘按键功能。
+# 顶部的 Actions 区域用于统一管理上滑、下滑和长按功能。
 # =====================================
 
 local colors = import '../Constants/Colors.libsonnet';
@@ -14,67 +10,50 @@ local settings = import '../Settings.libsonnet';
 {
   local root = self,
 
-  // 数字键
-  oneButton: {
-    name: 'oneButton',
-    params: {
-      action: { character: '1' },
+  # ---------------------------------------------------------
+  # [快速配置区] 在这里统一修改数字键的上滑、下滑功能
+  # ---------------------------------------------------------
+  local Actions = {
+    // 如果想给数字键加符号，在这里定义，例如：'1': '!',
+    swipeUp: {
+      // '1': '!', '2': '@',
+    },
+    swipeDown: {
+    },
+    longPress: {
+      // 默认长按为空，或自定义功能
     },
   },
-  twoButton: {
-    name: 'twoButton',
+
+  # ---------------------------------------------------------
+  # [工具函数] 自动合并参数并处理颜色匹配
+  # ---------------------------------------------------------
+  local mkNumButton(name, char, params={}) = {
+    name: name,
     params: {
-      action: { character: '2' },
-    },
+      action: { character: char },
+      // 引用 Actions 中的上滑定义
+      [if std.objectHas(Actions.swipeUp, char) then 'swipeUp']: { action: { character: Actions.swipeUp[char] } },
+      // 引用 Actions 中的下滑定义
+      [if std.objectHas(Actions.swipeDown, char) then 'swipeDown']: { action: { character: Actions.swipeDown[char] } },
+    } + params, // 合并传入的 params (包含关键的 insets)
   },
-  threeButton: {
-    name: 'threeButton',
-    params: {
-      action: { character: '3' },
-    },
-  },
-  fourButton: {
-    name: 'fourButton',
-    params: {
-      action: { character: '4' },
-    },
-  },
-  fiveButton: {
-    name: 'fiveButton',
-    params: {
-      action: { character: '5' },
-    },
-  },
-  sixButton: {
-    name: 'sixButton',
-    params: {
-      action: { character: '6' },
-    },
-  },
-  sevenButton: {
-    name: 'sevenButton',
-    params: {
-      action: { character: '7' },
-    },
-  },
-  eightButton: {
-    name: 'eightButton',
-    params: {
-      action: { character: '8' },
-    },
-  },
-  nineButton: {
-    name: 'nineButton',
-    params: {
-      action: { character: '9' },
-    },
-  },
-  zeroButton: {
-    name: 'zeroButton',
-    params: {
-      action: { character: '0' },
-    },
-  },
+
+  # ---------------------------------------------------------
+  # [按键定义区]
+  # ---------------------------------------------------------
+
+  // 1. 基础数字键
+  oneButton:   mkNumButton('oneButton', '1'),
+  twoButton:   mkNumButton('twoButton', '2'),
+  threeButton: mkNumButton('threeButton', '3'),
+  fourButton:  mkNumButton('fourButton', '4'),
+  fiveButton:  mkNumButton('fiveButton', '5'),
+  sixButton:   mkNumButton('sixButton', '6'),
+  sevenButton: mkNumButton('sevenButton', '7'),
+  eightButton: mkNumButton('eightButton', '8'),
+  nineButton:  mkNumButton('nineButton', '9'),
+  zeroButton:  mkNumButton('zeroButton', '0'),
 
   numericButtons: [
     self.oneButton, self.twoButton, self.threeButton,
@@ -83,308 +62,146 @@ local settings = import '../Settings.libsonnet';
     self.zeroButton,
   ],
 
-  // 数字键盘空格
+  // 2. 数字键盘特殊功能键
   numericSpaceButton: {
     name: 'numericSpaceButton',
-    params: {
-      action: 'space',
-      systemImageName: 'space',
-    },
+    params: { action: 'space', systemImageName: 'space' },
   },
 
-  // 数字键盘等号
   numericEqualButton: {
     name: 'numericEqualButton',
-    params: {
-      // 在我的方案中，这个符号是计算器前缀符号，所以用 character 而不是 symbol
-      action: { character: '=' },
-    },
+    params: { action: { character: '=' } },
   },
 
-  // 数字键盘冒号
   numericColonButton: {
     name: 'numericColonButton',
-    params: {
-      action: { symbol: ':' },
-    },
+    params: { action: { symbol: ':' } },
   },
 
-  // 数字键小数点符号
   dotButton: {
     name: 'dotButton',
     params: {
       action: { symbol: '.' },
-
-      // 使用方案中的计算器时，通常会有一个计算器前缀（或算式）在 preedit 中，
-      // 此时就把小数点交给 rime 处理
       whenPreeditChanged: { action: { character: '.' } }
     },
   },
 
-  // 数字键盘符号列表
   numericSymbolsCollection: {
     name: 'numericSymbolsCollection',
-    params: {
-      type: 'numericSymbols',
-    },
+    params: { type: 'numericSymbols' },
   },
 
-  // 数字键盘横向时全部部分视图
   numericCategorySymbolCollection: {
     name: 'numericCategorySymbolCollection',
-    params: {
-      type: 'categorySymbols',
-    },
+    params: { type: 'categorySymbols' },
   },
 
-  // 以下符号是给“行式布局”的数字键盘使用的
-  // 连接号(减号)
+  // 3. 行式布局及 16 进制按键（统一规范化结构）
   hyphenButton: {
     name: 'hyphenButton',
     params: {
-      action:
-        // 注音布局的数字键盘中，此符号被注音方案占用，所以用 symbol 直接上屏
-        if settings.keyboardLayout=='bopomofo' then
-          { symbol: '-' }
-        else
-          { character: '-' },
+      action: if settings.keyboardLayout=='bopomofo' then { symbol: '-' } else { character: '-' },
     },
   },
 
-  // 斜杠
   forwardSlashButton: {
     name: 'forwardSlashButton',
     params: {
       action: { symbol: '/' },
-
-      whenPreeditChanged: {
-        // 当 preedit 中有内容时，斜杠交给 Rime 处理
-        action: { character: '/' },
-      },
+      whenPreeditChanged: { action: { character: '/' } },
     },
   },
 
-  // 冒号
   colonButton: {
     name: 'colonButton',
-    params: {
-      action: { character: ':' },
-      text: '：',
-
-      whenAlphabetic: {
-        text: ':',
-      },
-    },
+    params: { action: { character: ':' }, text: '：', whenAlphabetic: { text: ':' } },
   },
 
-  // 分号
   semicolonButton: {
     name: 'semicolonButton',
-    params: {
-      action: { character: ';' },
-      text: '；',
-
-      whenAlphabetic: {
-        text: ';',
-      },
-    },
+    params: { action: { character: ';' }, text: '；', whenAlphabetic: { text: ';' } },
   },
 
-  // 左括号
   leftParenthesisButton: {
     name: 'leftParenthesisButton',
-    params: {
-      action: { character: '(' },
-    },
+    params: { action: { character: '(' } },
   },
 
-  // 右括号
   rightParenthesisButton: {
     name: 'rightParenthesisButton',
-    params: {
-      action: { character: ')' },
-    },
+    params: { action: { character: ')' } },
   },
 
-  // 货币符号
   moneyButton: {
     name: 'moneyButton',
-    params: {
-      action: { character: '$' },
-      text: '¥',
-
-      whenAlphabetic: {
-        text: '$',
-      },
-    },
+    params: { action: { character: '$' }, text: '¥', whenAlphabetic: { text: '$' } },
   },
 
-  // 地址符号
   atButton: {
     name: 'atButton',
-    params: {
-      action: { character: '@' },
-    },
+    params: { action: { character: '@' } },
   },
 
-  // “ 双引号(有方向性的引号)
   leftCurlyQuoteButton: {
     name: 'leftCurlyQuoteButton',
-    params: {
-      action: { symbol: '“' },
-
-      whenAlphabetic: {
-        action: { symbol: "'" },
-      },
-    },
+    params: { action: { symbol: '“' }, whenAlphabetic: { action: { symbol: "'" } } },
   },
-  // ” 双引号(有方向性的引号)
+
   rightCurlyQuoteButton: {
     name: 'rightCurlyQuoteButton',
-    params: {
-      action: { symbol: '”' },
-
-      whenAlphabetic: {
-        action: { symbol: '"' },
-      },
-    },
+    params: { action: { symbol: '”' }, whenAlphabetic: { action: { symbol: '"' } } },
   },
 
-  // '*' 符号
   asteriskButton: {
     name: 'asteriskButton',
-    params: {
-      action: { character: '*' },
-    },
+    params: { action: { character: '*' } },
   },
-  // + 符号
+
   plusButton: {
     name: 'plusButton',
-    params: {
-      action: { character: '+' },
-    },
+    params: { action: { character: '+' } },
   },
 
   chinesePeriodButton: {
     name: 'chinesePeriodButton',
-    params: {
-      action: { symbol: '。' },
-
-      whenAlphabetic: {
-        action: { symbol: '&' },
-      }
-    },
+    params: { action: { symbol: '。' }, whenAlphabetic: { action: { symbol: '&' } } },
   },
 
-  // 顿号(只在中文中使用)
   ideographicCommaButton: {
     name: 'ideographicCommaButton',
-    params: {
-      action: { symbol: '、' },
-
-      whenAlphabetic: {
-        action: { symbol: '\\' },
-      },
-    },
+    params: { action: { symbol: '、' }, whenAlphabetic: { action: { symbol: '\\' } } },
   },
-  // 英文问号
+
   questionMarkButton: {
     name: 'questionMarkEnButton',
-    params: {
-      action: { character: '?' },
-    },
+    params: { action: { character: '?' } },
   },
-  // 英文感叹号
+
   exclamationMarkButton: {
     name: 'exclamationMarkButton',
-    params: {
-      action: { character: '!' },
-    },
+    params: { action: { character: '!' } },
   },
-  // 井号
+
   hashButton: {
     name: 'hashButton',
-    params: {
-      action: { character: '#' },
-    },
+    params: { action: { character: '#' } },
   },
 
-  // 以下符号是给“16进制”的数字键盘使用的
-  // A-F 字符
-  aHexButton: {
-    name: 'aHexButton',
-    params: {
-      action: { symbol: 'a' },
-      longPress: [
-        { action: { symbol: 'A' } },
-      ],
-    },
-  },
-
-  bHexButton: {
-    name: 'bHexButton',
-    params: {
-      action: { symbol: 'b' },
-      longPress: [
-        { action: { symbol: 'B' } },
-       ],
-    },
-  },
-
-  cHexButton: {
-    name: 'cHexButton',
-    params: {
-      action: { symbol: 'c' },
-      longPress: [
-        { action: { symbol: 'C' } },
-      ],
-    },
-  },
-
-  dHexButton: {
-    name: 'dHexButton',
-    params: {
-      action: { symbol: 'd' },
-      longPress: [
-        { action: { symbol: 'D' } },
-      ],
-    },
-  },
-
-  eHexButton: {
-    name: 'eHexButton',
-    params: {
-      action: { symbol: 'e' },
-      longPress: [
-        { action: { symbol: 'E' } },
-      ],
-    },
-  },
-
-  fHexButton: {
-    name: 'fHexButton',
-    params: {
-      action: { symbol: 'f' },
-      longPress: [
-        { action: { symbol: 'F' } },
-      ],
-    },
-  },
+  // 16 进制按键 (A-F)
+  aHexButton: mkNumButton('aHexButton', 'a', { action: { symbol: 'a' }, longPress: [{ action: { symbol: 'A' } }] }),
+  bHexButton: mkNumButton('bHexButton', 'b', { action: { symbol: 'b' }, longPress: [{ action: { symbol: 'B' } }] }),
+  cHexButton: mkNumButton('cHexButton', 'c', { action: { symbol: 'c' }, longPress: [{ action: { symbol: 'C' } }] }),
+  dHexButton: mkNumButton('dHexButton', 'd', { action: { symbol: 'd' }, longPress: [{ action: { symbol: 'D' } }] }),
+  eHexButton: mkNumButton('eHexButton', 'e', { action: { symbol: 'e' }, longPress: [{ action: { symbol: 'E' } }] }),
+  fHexButton: mkNumButton('fHexButton', 'f', { action: { symbol: 'f' }, longPress: [{ action: { symbol: 'F' } }] }),
 
   backSlashHexButton: {
     name: 'backSlashHexButton',
-    params: {
-      action: { symbol: '\\' },
-    },
+    params: { action: { symbol: '\\' } },
   },
 
   xHexButton: {
     name: 'xHexButton',
-    params: {
-      action: { symbol: 'x' },
-      longPress: [
-        { action: { symbol: 'X' } },
-       ],
-    },
+    params: { action: { symbol: 'x' }, longPress: [{ action: { symbol: 'X' } }] },
   },
 }

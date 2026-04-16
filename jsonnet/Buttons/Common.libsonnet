@@ -59,6 +59,10 @@ local settings = import '../Settings.libsonnet';
           action: { shortcut: '#次选上屏' },
           text: '次选',
         },
+        swipeDown: {
+          action: { shortcut: '#三选上屏' },
+          text: '三选',
+        },
       },
     },
   },

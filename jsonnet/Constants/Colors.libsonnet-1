@@ -1,0 +1,179 @@
+local Settings = import '../Settings.libsonnet';
+
+// =============================================================
+// 1. 基础文字与全局 UI 颜色定义 (增强对比度)
+// =============================================================
+local labelColor = {
+  primary:   { light: '#444444', dark: '#FFFFFF' }, // 暗色模式纯白，对比度最高
+  secondary: { light: '#8a8a8a', dark: '#F0F0F0' },
+  tertiary:  { light: '#c4c4c4', dark: '#BBBBBB' },
+  quaternary: { light: '#dcdcdc', dark: '#505050' },
+};
+
+// 全局分割线颜色
+local separatorColor = {
+  light: '#EEEEEE',
+  dark: '#444446',
+};
+
+// 键盘底盒背景色
+local keyboardBackgroundColor = {
+  light: '#FFFFFF',
+  dark: '#121212',
+};
+
+// =============================================================
+// 2. 按键背景色彩矩阵 (仅替换颜色，保留 self 逻辑)
+// =============================================================
+local standardButtonBackgroundColor = {
+  custom: {
+    // 默认按键背景色
+    default: { light: '#F9F9F9', dark: '#323234' },
+
+    // --- 第一排按键 (梦幻马卡龙色系) ---
+    q: { light: '#FFC8DD', dark: '#9A5F71' }, // 樱花粉
+    w: { light: '#BDE0FE', dark: '#5F7D9A' }, // 汽水蓝
+    e: { light: '#FFEEAD', dark: '#9A925F' }, // 奶酪黄
+    r: { light: '#D1D1F9', dark: '#73739A' }, // 丁香紫
+    t: { light: '#C1E1C1', dark: '#5F9A5F' }, // 薄荷绿
+    y: { light: '#FFC8DD', dark: '#9A5F71' },
+    u: { light: '#BDE0FE', dark: '#5F7D9A' },
+    i: { light: '#FFEEAD', dark: '#9A925F' },
+    o: { light: '#D1D1F9', dark: '#73739A' },
+    p: { light: '#C1E1C1', dark: '#5F9A5F' },
+
+    // --- 第二排按键 ---
+    a: { light: '#BDE0FE', dark: '#5F7D9A' },
+    s: { light: '#FFC8DD', dark: '#9A5F71' },
+    d: { light: '#C1E1C1', dark: '#5F9A5F' },
+    f: { light: '#FFEEAD', dark: '#9A925F' },
+    g: { light: '#D1D1F9', dark: '#73739A' },
+    h: { light: '#BDE0FE', dark: '#5F7D9A' },
+    j: { light: '#FFC8DD', dark: '#9A5F71' }, // 重点跳色
+    k: { light: '#C1E1C1', dark: '#5F9A5F' },
+    l: { light: '#FFEEAD', dark: '#9A925F' },
+
+    // --- 第三排按键 ---
+    z: { light: '#D1D1F9', dark: '#73739A' },
+    x: { light: '#BDE0FE', dark: '#5F7D9A' },
+    c: { light: '#FFC8DD', dark: '#9A5F71' }, // 重点跳色
+    v: { light: '#C1E1C1', dark: '#5F9A5F' },
+    b: { light: '#FFEEAD', dark: '#9A925F' },
+    n: { light: '#D1D1F9', dark: '#73739A' },
+    m: { light: '#BDE0FE', dark: '#5F7D9A' },
+
+    // --- 引用映射 (请确保编译器支持此处的 self) ---
+    "1":  self.q, "2":  self.w, "3":  self.e, "4":  self.r, "5":  self.t,
+    "6":  self.u, "7":  self.i, "8":  self.o, "9":  self.p, "0":  self.y,
+
+    "-":  self.r, "/":  self.t, ":":  self.y, ";":  self.u, "(":  self.i,
+    ")":  self.o, "$":  self.p, "@":  self.q, "“":  self.w, "”":  self.e,
+
+    "+":  self.a, "*":  self.s, "、": self.d, "#":  self.f, "?":  self.g,
+    "!":  self.h, ".":  self.j, "。": self.k, "=":  self.l,
+  },
+};
+
+// =============================================================
+// 3. 交互状态颜色
+// =============================================================
+local standardButtonHighlightedBackgroundColor = {
+  light: '#EBEBEB',
+  dark: '#4A4A4C',
+};
+
+local standardButtonForegroundColor = labelColor.primary;
+local standardButtonHighlightedForegroundColor = standardButtonForegroundColor;
+
+local standardButtonShadowColor = { light: '#00000010', dark: '#FFFFFF0A' };
+local lowerEdgeOfButtonNormalColor = { light: '#00000005', dark: '#00000040' };
+local lowerEdgeOfButtonHighlightColor = { light: '#00000005', dark: '#00000040' };
+
+// =============================================================
+// 4. 系统功能键
+// =============================================================
+local systemButtonBackgroundColor = {
+  light: '#EEF2F5',
+  dark: '#3A3A3E',
+};
+
+local systemButtonHighlightedBackgroundColor = {
+  light: '#FFFFFF',
+  dark: '#505054',
+};
+
+local systemButtonForegroundColor = labelColor.primary;
+local systemButtonHighlightedForegroundColor = systemButtonForegroundColor;
+
+local accentColors = [
+  { background: '#FFADAD', foreground: '#FFFFFF' },
+  { background: '#9BFBC0', foreground: '#333333' },
+  { background: '#FFD6A5', foreground: '#333333' },
+  { background: '#A0C4FF', foreground: '#FFFFFF' },
+  { background: '#BDB2FF', foreground: '#FFFFFF' },
+];
+
+local colorButtonBackgroundColor = if Settings.accentColor == 0 then systemButtonBackgroundColor else
+  local color = accentColors[Settings.accentColor - 1].background;
+  { light: color, dark: color };
+
+local colorButtonForegroundColor = if Settings.accentColor == 0 then systemButtonForegroundColor else
+  local color = accentColors[Settings.accentColor - 1].foreground;
+  { light: color, dark: color };
+
+local colorButtonHighlightedBackgroundColor = systemButtonHighlightedBackgroundColor;
+local colorButtonHighlightedForegroundColor = labelColor.primary;
+
+// =============================================================
+// 5. 交互气泡与候选词
+// =============================================================
+local standardCalloutBackgroundColor = { light: '#FFFFFF', dark: '#444448' };
+local standardCalloutForegroundColor = standardButtonForegroundColor;
+local standardCalloutHighlightedForegroundColor = colorButtonForegroundColor;
+local standardCalloutSelectedBackgroundColor = colorButtonBackgroundColor;
+local standardCalloutBorderColor = { light: '#EEEEEE', dark: '#555558' };
+
+local candidateHighlightColor = standardButtonBackgroundColor.custom.e;
+local candidateForegroundColor = standardButtonForegroundColor;
+local candidateSeparatorColor = separatorColor;
+
+local preeditForegroundColor = standardButtonForegroundColor;
+local toolbarButtonForegroundColor = standardButtonForegroundColor;
+local toolbarButtonHighlightedForegroundColor = standardButtonForegroundColor;
+
+// =============================================================
+// 6. 最终全量导出
+// =============================================================
+{
+  labelColor: labelColor,
+  separatorColor: separatorColor,
+  keyboardBackgroundColor: keyboardBackgroundColor,
+  standardButtonBackgroundColor: standardButtonBackgroundColor,
+  standardButtonHighlightedBackgroundColor: standardButtonHighlightedBackgroundColor,
+  standardButtonForegroundColor: standardButtonForegroundColor,
+  standardButtonHighlightedForegroundColor: standardButtonHighlightedForegroundColor,
+  alternativeForegroundColor: labelColor.secondary,
+  alternativeHighlightedForegroundColor: labelColor.secondary,
+  standardButtonShadowColor: standardButtonShadowColor,
+  systemButtonBackgroundColor: systemButtonBackgroundColor,
+  systemButtonHighlightedBackgroundColor: systemButtonHighlightedBackgroundColor,
+  systemButtonForegroundColor: systemButtonForegroundColor,
+  systemButtonHighlightedForegroundColor: systemButtonHighlightedForegroundColor,
+  colorButtonBackgroundColor: colorButtonBackgroundColor,
+  colorButtonHighlightedBackgroundColor: colorButtonHighlightedBackgroundColor,
+  colorButtonForegroundColor: colorButtonForegroundColor,
+  colorButtonHighlightedForegroundColor: colorButtonHighlightedForegroundColor,
+  lowerEdgeOfButtonNormalColor: lowerEdgeOfButtonNormalColor,
+  lowerEdgeOfButtonHighlightColor: lowerEdgeOfButtonHighlightColor,
+  standardCalloutBackgroundColor: standardCalloutBackgroundColor,
+  standardCalloutForegroundColor: standardCalloutForegroundColor,
+  standardCalloutHighlightedForegroundColor: standardCalloutHighlightedForegroundColor,
+  standardCalloutSelectedBackgroundColor: standardCalloutSelectedBackgroundColor,
+  standardCalloutBorderColor: standardCalloutBorderColor,
+  preeditForegroundColor: preeditForegroundColor,
+  toolbarButtonForegroundColor: toolbarButtonForegroundColor,
+  toolbarButtonHighlightedForegroundColor: toolbarButtonHighlightedForegroundColor,
+  candidateHighlightColor: candidateHighlightColor,
+  candidateForegroundColor: candidateForegroundColor,
+  candidateSeparatorColor: candidateSeparatorColor,
+}

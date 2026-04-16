@@ -85,40 +85,50 @@ local keyboardLayout = {
 };
 
 local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
+  // 【核心修复】极其严格的取色逻辑，彻底避开 objectHas 报错
+  local getFakeColor(btn) = (
+    if std.isObject(btn) && std.objectHas(btn, "params") then
+      local p = btn.params;
+      if std.isObject(p) && std.objectHas(p, "action") then
+        local act = p.action;
+        if std.isObject(act) then
+          local char = if std.objectHas(act, "character") then act.character
+                       else if std.objectHas(act, "symbol") then act.symbol
+                       else null;
+          // 映射表
+          local map = { 'A':'a', 'B':'b', 'C':'c', 'D':'d', 'E':'e', 'F':'f', 'x':'x', ':':'e', '.':'j', '=':'l', '\\':'d' };
+          if char != null && std.objectHas(map, char) then { action: { character: map[char] } } else {}
+        else {}
+      else {}
+    else {}
+  );
+
   {
     keyboardHeight: if isPortrait then commonButtons.keyboardHeight.portrait else commonButtons.keyboardHeight.landscape,
     keyboardStyle: utils.newBackgroundStyle(style=basicStyle.keyboardBackgroundStyleName),
   }
   + keyboardLayout
-  // number Buttons
+  // 1. 数字与字母 (A-F)
   + std.foldl(
     function(acc, button) acc +
       basicStyle.newAlphabeticButton(
         button.name,
         isDark,
-        {
-          fontSize: fonts.numericButtonTextFontSize,
-        }
+        extraParams + getFakeColor(button) + { fontSize: fonts.numericButtonTextFontSize }
         + button.params + basicStyle.hintStyleSize
         + (
           if utils.numericActionNeedSymbol(settings.keyboardLayout) then
           {
             action: utils.replaceCharacterToSymbolRecursive(button.params.action),
-            whenPreeditChanged: {
-              action: button.params.action,
-            },
+            whenPreeditChanged: { action: button.params.action },
           }
           else {}
         ),
         needHint=false,
       ),
     numericButtons.numericButtons + [
-      numericButtons.aHexButton,
-      numericButtons.bHexButton,
-      numericButtons.cHexButton,
-      numericButtons.dHexButton,
-      numericButtons.eHexButton,
-      numericButtons.fHexButton,
+      numericButtons.aHexButton, numericButtons.bHexButton, numericButtons.cHexButton,
+      numericButtons.dHexButton, numericButtons.eHexButton, numericButtons.fHexButton,
     ],
     {})
   + {
@@ -126,38 +136,39 @@ local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
       utils.newBackgroundStyle(style=basicStyle.systemButtonBackgroundStyleName)
       + numericButtons.numericSymbolsCollection.params + extraParams,
   }
+  // 2. 底部符号
   + std.foldl(
     function(acc, button) acc +
-      basicStyle.newSystemButton(
+      basicStyle.newAlphabeticButton(
         button.name,
         isDark,
-        button.params
+        extraParams + getFakeColor(button) + button.params
       ),
     [
-      numericButtons.numericSpaceButton,
-      numericButtons.dotButton,
-      numericButtons.backSlashHexButton,
-      numericButtons.xHexButton,
-      commonButtons.backspaceButton,
-      numericButtons.numericEqualButton,
-      numericButtons.numericColonButton,
-      commonButtons.enterButton,
+      numericButtons.numericSpaceButton, numericButtons.dotButton,
+      numericButtons.backSlashHexButton, numericButtons.xHexButton,
+      numericButtons.numericEqualButton, numericButtons.numericColonButton,
     ],
-    basicStyle.newColorButton(
-        commonButtons.gotoPrimaryKeyboardButton.name,
-        isDark,
-        commonButtons.gotoPrimaryKeyboardButton.params + {
-          size: { height: '1/4' },
-        }
-      ));
+    // 3. 功能键
+    std.foldl(
+      function(acc, button) acc +
+        basicStyle.newSystemButton(
+          button.name,
+          isDark,
+          extraParams + button.params
+        ),
+      [commonButtons.backspaceButton, commonButtons.enterButton],
+      basicStyle.newColorButton(
+          commonButtons.gotoPrimaryKeyboardButton.name,
+          isDark,
+          extraParams + commonButtons.gotoPrimaryKeyboardButton.params + { size: { height: '1/4' } }
+        )
+    ));
 
 {
   new(isDark, isPortrait):
     local insets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
-
-    local extraParams = {
-      insets: insets,
-    };
+    local extraParams = { insets: insets };
 
     preedit.new(isDark)
     + toolbar.new(isDark, isPortrait)
@@ -170,5 +181,4 @@ local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
     + basicStyle.newLongPressSymbolsSelectedBackgroundStyle(isDark, extraParams)
     + basicStyle.newButtonAnimation()
     + newKeyLayout(isDark, isPortrait, extraParams)
-    // Notifications
 }

@@ -11,6 +11,7 @@ local keyboardLayout = {
   keyboardLayout: [
     {
       HStack: {
+        spacing: 0, // 依赖 Insets 产生间隙
         subviews: [
           { Cell: buttons.qButton.name },
           { Cell: buttons.eButton.name },
@@ -22,6 +23,7 @@ local keyboardLayout = {
     },
     {
       HStack: {
+        spacing: 0,
         subviews: [
           { Cell: buttons.aButton.name },
           { Cell: buttons.dButton.name },
@@ -33,6 +35,7 @@ local keyboardLayout = {
     },
     {
       HStack: {
+        spacing: 0,
         subviews: [
           { Cell: commonButtons.shiftButton.name },
           { Cell: buttons.zButton.name },
@@ -45,6 +48,7 @@ local keyboardLayout = {
     },
     {
       HStack: {
+        spacing: 0,
         subviews: [
           { Cell: commonButtons.numericButton.name },
           { Cell: commonButtons.commaButton.name },
@@ -58,75 +62,80 @@ local keyboardLayout = {
 };
 
 local newKeyLayout(isDark=false, isPortrait=true) =
+  local currentInsets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
+
   {
     keyboardHeight: if isPortrait then commonButtons.keyboardHeight.portrait else commonButtons.keyboardHeight.landscape,
     keyboardStyle: utils.newBackgroundStyle(style=basicStyle.keyboardBackgroundStyleName),
   }
   + keyboardLayout
 
-  // letter Buttons
+  // 生成字母键 (合并 Insets)
   + std.foldl(function(acc, button)
       acc +
       basicStyle.newAlphabeticButton(
         button.name,
         isDark,
-        basicStyle.hintStyleSize + basicStyle.textCenterWhenShowSwipeText + button.params +
+        basicStyle.hintStyleSize +
+        basicStyle.textCenterWhenShowSwipeText +
+        { insets: currentInsets } + // 核心：注入间隙
+        button.params +
         {
           [if settings.uppercaseForChinese then 'text']: std.asciiUpper(button.params.text)
         }),
       buttons.letterButtons,
       {})
 
-  // Third Row
+  // 第三行功能键
   + basicStyle.newSystemButton(
     commonButtons.shiftButton.name,
     isDark,
-    {
-      size: { width: '168.75/1125' },
-    }
+    { size: { width: '168.75/1125' }, insets: currentInsets } // 核心：注入间隙
     + commonButtons.shiftButton.params
   )
 
   + basicStyle.newSystemButton(
     commonButtons.backspaceButton.name,
     isDark,
-    {
-      size: { width: '168.75/1125' },
-    }
+    { size: { width: '168.75/1125' }, insets: currentInsets } // 核心：注入间隙
     + commonButtons.backspaceButton.params,
   )
 
-  // Fourth Row
+  // 第四行功能键
   + basicStyle.newSystemButton(
     commonButtons.numericButton.name,
     isDark,
-    { size: { width: { percentage: 0.2 } } }
+    { size: { width: { percentage: 0.2 } }, insets: currentInsets } // 核心：注入间隙
     + commonButtons.numericButton.params
   )
 
   + basicStyle.newAlphabeticButton(
     commonButtons.commaButton.name,
     isDark,
-    { size: { width: { percentage: 0.12 } } }
+    { size: { width: { percentage: 0.12 } }, insets: currentInsets } // 核心：注入间隙
     + commonButtons.commaButton.params + basicStyle.hintStyleSize,
     swipeTextFollowSetting=false,
   )
   + basicStyle.newAlphabeticButton(
     commonButtons.spaceButton.name,
     isDark,
-    basicStyle.newSpaceButtonForegroundStyle(commonButtons.spaceButton.params, '$rimeSchemaName', isDark),
+    basicStyle.newSpaceButtonForegroundStyle(
+      commonButtons.spaceButton.params + { insets: currentInsets }, // 核心：注入间隙
+      '$rimeSchemaName',
+      isDark
+    ),
     needHint=false,
   )
   + basicStyle.newSystemButton(
     commonButtons.alphabeticButton.name,
     isDark,
-    { size: { width: { percentage: 0.12 } } }
+    { size: { width: { percentage: 0.12 } }, insets: currentInsets } // 核心：注入间隙
     + commonButtons.alphabeticButton.params
   )
   + basicStyle.newColorButton(
     commonButtons.enterButton.name,
     isDark,
-    { size: { width: { percentage: 0.22 } } }
+    { size: { width: { percentage: 0.22 } }, insets: currentInsets } // 核心：注入间隙
     + commonButtons.enterButton.params
   )
 ;
@@ -134,10 +143,7 @@ local newKeyLayout(isDark=false, isPortrait=true) =
 {
   new(isDark, isPortrait):
     local insets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
-
-    local extraParams = {
-      insets: insets,
-    };
+    local extraParams = { insets: insets };
 
     preedit.new(isDark)
     + toolbar.new(isDark, isPortrait)

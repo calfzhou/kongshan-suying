@@ -20,7 +20,7 @@ local narrowVStackStyle = {
   },
 };
 
-// 半宽 VStack 宽度样式，横屏时一半显示数字，一半显示符号
+// 半宽 VStack 宽度样式
 local halfVStackStyle = {
   local this = self,
   name: 'halfVStackStyle',
@@ -33,7 +33,7 @@ local halfVStackStyle = {
   },
 };
 
-// 9 键布局
+// 9 键布局定义
 local numericLayout = {
   keyboardLayout: [
     {
@@ -110,13 +110,13 @@ local totalKeyboardLayout(isPortrait=false) =
     keyboardLayout: if settings.keyboardLayout=='9' then
       [
         symbolPart,
-        { VStack: {} }, // 中间留白
+        { VStack: {} },
         numberPart,
       ]
     else
       [
         numberPart,
-        { VStack: {} }, // 中间留白
+        { VStack: {} },
         symbolPart,
       ],
   };
@@ -128,12 +128,14 @@ local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
     keyboardStyle: utils.newBackgroundStyle(style=basicStyle.keyboardBackgroundStyleName),
   }
   + totalKeyboardLayout(isPortrait)
-  // number Buttons
+
+  // 1. 修复数字按键：透传 extraParams (insets)
   + std.foldl(
     function(acc, button) acc +
       basicStyle.newAlphabeticButton(
         button.name,
         isDark,
+        extraParams + // [修复点] 注入边距参数
         {
           fontSize: fonts.numericButtonTextFontSize,
         }
@@ -162,12 +164,14 @@ local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
       utils.newBackgroundStyle(style=basicStyle.systemButtonBackgroundStyleName)
       + numeric9Buttons.numericCategorySymbolCollection.params + extraParams,
   }
+
+  // 2. 修复系统按键：透传 extraParams (insets)
   + std.foldl(
     function(acc, button) acc +
       basicStyle.newSystemButton(
         button.name,
         isDark,
-        button.params
+        button.params + extraParams // [修复点] 注入边距参数
       ),
     [
       numeric9Buttons.numericSpaceButton,
@@ -177,10 +181,11 @@ local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
       numeric9Buttons.numericColonButton,
       commonButtons.enterButton,
     ],
+    // 3. 修复返回键颜色：透传 extraParams
     basicStyle.newColorButton(
         commonButtons.gotoPrimaryKeyboardButton.name,
         isDark,
-        commonButtons.gotoPrimaryKeyboardButton.params + {
+        commonButtons.gotoPrimaryKeyboardButton.params + extraParams + {
           size: { height: '1/4' },
         }
       ));
@@ -219,5 +224,4 @@ else
     + basicStyle.newLongPressSymbolsSelectedBackgroundStyle(isDark, extraParams)
     + basicStyle.newButtonAnimation()
     + newKeyLayout(isDark, isPortrait, extraParams)
-    // Notifications
 }
