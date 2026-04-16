@@ -3,7 +3,8 @@
 
 SVG_SRC := demo/demo.svg
 PNG_OUT := demo.png
-SKIN_BASE := 空山素影-calf
+SKIN_NAME := 空山素影-calf
+ARTIFACT_BASE := kongshan-suying-calf
 
 # Detect version: use git tag on current commit, or "preview"
 VERSION := $(shell git tag --points-at HEAD 2>/dev/null | head -1)
@@ -13,12 +14,12 @@ endif
 
 # Folder name inside the zip: add -preview suffix only for preview builds
 ifeq ($(VERSION),preview)
-  SKIN_DIR := $(SKIN_BASE)-preview
+  SKIN_DIR := $(SKIN_NAME)-preview
 else
-  SKIN_DIR := $(SKIN_BASE)
+  SKIN_DIR := $(SKIN_NAME)
 endif
 
-CSKIN_OUT := $(SKIN_BASE)-$(VERSION).cskin
+CSKIN_OUT := $(ARTIFACT_BASE)-$(VERSION).cskin
 
 # --- Targets ---
 
@@ -57,5 +58,5 @@ $(PNG_OUT): $(SVG_SRC) demo/light.png demo/dark.png
 	@echo "Generated $(PNG_OUT)"
 
 clean:
-	rm -f $(PNG_OUT) config.yaml $(SKIN_BASE)-*.cskin
+	rm -f $(PNG_OUT) config.yaml $(ARTIFACT_BASE)-*.cskin
 	rm -f light/*.yaml dark/*.yaml

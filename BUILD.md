@@ -32,7 +32,8 @@ The Makefile auto-detects the version from git tags:
 - If the current commit has a tag (e.g., `v1.0`), uses that as the version.
 - Otherwise, uses `preview`.
 
-The version appears in the demo image and the output filename (`kongshan-suying-<version>.cskin`).
+The version appears in the demo image and the output filename (`kongshan-suying-calf-<version>.cskin`).
+Inside the archive, the skin folder name remains Chinese (`空山素影-calf` or `空山素影-calf-preview`) so Hamster v3 shows the expected skin name.
 
 ## On-Device Build
 

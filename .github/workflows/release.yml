@@ -30,7 +30,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y librsvg2-bin zip
+          sudo apt-get install -y librsvg2-bin zip fonts-noto-cjk
+          fc-cache -f -v
           go install github.com/google/go-jsonnet/cmd/jsonnet@v0.21.0
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
           jsonnet --version
@@ -83,4 +84,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body: ${{ steps.tag_desc.outputs.body }}
-          files: 空山素影-calf-*.cskin
+          files: kongshan-suying-calf-*.cskin
