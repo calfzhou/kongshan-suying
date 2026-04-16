@@ -31,11 +31,12 @@ rebuild: clean cskin
 # Build .cskin package
 cskin: $(CSKIN_OUT)
 
-$(CSKIN_OUT): jsonnet $(PNG_OUT) README.md
+$(CSKIN_OUT): jsonnet $(PNG_OUT) README-calf.md
 	@echo "Packaging $(CSKIN_OUT) (folder: $(SKIN_DIR))..."
 	@rm -f $(CSKIN_OUT)
 	@mkdir -p $(SKIN_DIR)/light $(SKIN_DIR)/dark
-	@cp config.yaml $(PNG_OUT) README.md $(SKIN_DIR)/
+	@cp config.yaml $(PNG_OUT) $(SKIN_DIR)/
+	@cp README-calf.md $(SKIN_DIR)/README.md
 	@cp light/*.yaml $(SKIN_DIR)/light/
 	@cp dark/*.yaml $(SKIN_DIR)/dark/
 	@cp -r jsonnet $(SKIN_DIR)/
