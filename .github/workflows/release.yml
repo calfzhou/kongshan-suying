@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jsonnet librsvg2-bin zip
+
+      - name: Build release package
+        run: make clean cskin
+
+      - name: Get tag description
+        id: tag_desc
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          # Try to get the annotated tag message
+          BODY=$(git tag -l --format='%(contents)' "$TAG" 2>/dev/null || true)
+          # Use a delimiter to safely handle multiline output
+          {
+            echo "body<<EOF"
+            echo "$BODY"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.tag_desc.outputs.body }}
+          files: 空山素影-calf-*.cskin
