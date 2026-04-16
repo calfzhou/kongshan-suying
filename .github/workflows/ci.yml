@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - calf
+  pull_request:
+    branches:
+      - calf
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install jsonnet v0.22.0 (go-jsonnet) + deps
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          JSONNET_VERSION="v0.22.0"
+          curl -fsSL -o /tmp/jsonnet.tar.gz \
+            "https://github.com/google/go-jsonnet/releases/download/${JSONNET_VERSION}/go-jsonnet_${JSONNET_VERSION#v}_Linux_x86_64.tar.gz"
+          sudo tar -C /usr/local/bin -xzf /tmp/jsonnet.tar.gz jsonnet
+          jsonnet --version
+
+          sudo apt-get update
+          sudo apt-get install -y librsvg2-bin zip
+
+      - name: Build package
+        run: make clean cskin
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cskin
+          path: 空山素影-calf-*.cskin
+          if-no-files-found: error
