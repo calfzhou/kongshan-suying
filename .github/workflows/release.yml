@@ -46,13 +46,28 @@ jobs:
         run: |
           set -euo pipefail
           current_tag="${GITHUB_REF_NAME}"
-          tag_object_type="$(git cat-file -t "refs/tags/${current_tag}" 2>/dev/null || true)"
-          if [ "$tag_object_type" != "tag" ]; then
-            echo "::error::Tag ${current_tag} is not an annotated tag (object type: ${tag_object_type:-unknown}). Recreate it with: git tag -a ${current_tag} -m 'release notes' && git push origin ${current_tag}"
+          tag_ref="refs/tags/${current_tag}"
+          tag_oid="$(git ls-remote --tags origin "${tag_ref}" | awk 'NR==1 {print $1}')"
+          peeled_oid="$(git ls-remote --tags origin "${tag_ref}^{}" | awk 'NR==1 {print $1}')"
+
+          if [ -z "${tag_oid}" ]; then
+            echo "::error::Tag ${current_tag} was not found on origin."
+            exit 1
+          fi
+          if [ -z "${peeled_oid}" ] || [ "${tag_oid}" = "${peeled_oid}" ]; then
+            echo "::error::Tag ${current_tag} is not an annotated tag on origin. Recreate it with: git tag -a ${current_tag} -m 'release notes' && git push origin ${current_tag}"
             exit 1
           fi
 
-          tag_notes="$(git for-each-ref "refs/tags/${current_tag}" --format='%(contents)')"
+          # checkout may materialize tag refs as peeled commits; force-fetch real tag object
+          git fetch --force --no-tags origin "${tag_ref}:${tag_ref}"
+          tag_object_type="$(git cat-file -t "${tag_ref}" 2>/dev/null || true)"
+          if [ "$tag_object_type" != "tag" ]; then
+            echo "::error::Failed to read annotated tag object for ${current_tag} after fetch (got: ${tag_object_type:-unknown})."
+            exit 1
+          fi
+
+          tag_notes="$(git for-each-ref "${tag_ref}" --format='%(contents)')"
           if ! printf '%s' "$tag_notes" | grep -q '[^[:space:]]'; then
             echo "::error::Annotated tag ${current_tag} has an empty message. Add release notes to the tag annotation."
             exit 1
