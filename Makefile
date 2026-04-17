@@ -7,7 +7,11 @@ SKIN_NAME := 空山素影-calf
 ARTIFACT_BASE := kongshan-suying-calf
 
 # Detect version: use git tag on current commit, or "preview"
+# Also treat a dirty working tree as preview (local edits not committed)
 VERSION := $(shell git tag --points-at HEAD 2>/dev/null | head -1)
+ifneq ($(shell git status --porcelain 2>/dev/null),)
+  VERSION := preview
+endif
 ifeq ($(VERSION),)
   VERSION := preview
 endif
