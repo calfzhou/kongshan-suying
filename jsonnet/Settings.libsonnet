@@ -21,7 +21,7 @@
   # 9 : 九宫格布局
   # row : 数字显示在一行
   # hex : 十六进制布局
-  numericLayout: '9',
+  numericLayout: 'hex',
 
 
   # 输入时空格键上的内容，支持固定内容和变量
