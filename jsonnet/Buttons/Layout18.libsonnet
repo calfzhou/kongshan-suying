@@ -15,6 +15,8 @@
 
 local mk = import '_mkButton.libsonnet';
 local sym = mk.sym;
+local settings = import '../Settings.libsonnet';
+local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
 
 # 键位顺序即为键盘上的显示顺序
 local specs = [
@@ -50,7 +52,7 @@ local specs = [
 ];
 
 {
-  [mk.name(s)]: mk.button(s) for s in specs
+  [mk.name(s)]: mk.button(s, doublePinyinHints) for s in specs
 } + {
-  letterButtons: [mk.button(s) for s in specs],
+  letterButtons: [mk.button(s, doublePinyinHints) for s in specs],
 }

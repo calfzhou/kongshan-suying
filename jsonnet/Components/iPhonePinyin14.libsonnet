@@ -1,11 +1,20 @@
 local buttons = import '../Buttons/Layout14.libsonnet';
 local commonButtons = import '../Buttons/Common.libsonnet';
+local mk = import '../Buttons/_mkButton.libsonnet';
 local toolbarParams = import '../Buttons/Toolbar.libsonnet';
 local settings = import '../Settings.libsonnet';
 local basicStyle = import 'BasicStyle.libsonnet';
 local preedit = import 'Preedit.libsonnet';
 local toolbar = import 'Toolbar.libsonnet';
 local utils = import 'Utils.libsonnet';
+
+local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
+local shiftParams =
+  if doublePinyinHints != null && !std.objectHas(commonButtons.shiftButton.params, 'swipeUp') then
+    commonButtons.shiftButton.params + {
+      swipeUp: { action: { shortcut: mk.doublePinyinHintsShortcut }, text: '助记' },
+    }
+  else commonButtons.shiftButton.params;
 
 local keyboardLayout = {
   keyboardLayout: [
@@ -84,7 +93,7 @@ local newKeyLayout(isDark=false, isPortrait=true) =
     {
       size: { width: '168.75/1125' },
     }
-    + commonButtons.shiftButton.params
+    + shiftParams
   )
 
   + basicStyle.newSystemButton(

@@ -15,6 +15,8 @@
 local mk = import '_mkButton.libsonnet';
 local sym = mk.sym;
 local fk = mk.fullKeyButton;
+local settings = import '../Settings.libsonnet';
+local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
 
 # 键位顺序即为键盘上的显示顺序
 local specs = [
@@ -71,7 +73,7 @@ local specs = [
 ];
 
 {
-  [mk.name(s)]: fk(s) for s in specs
+  [mk.name(s)]: fk(s, doublePinyinHints) for s in specs
 } + {
-  letterButtons: [fk(s) for s in specs],
+  letterButtons: [fk(s, doublePinyinHints) for s in specs],
 }

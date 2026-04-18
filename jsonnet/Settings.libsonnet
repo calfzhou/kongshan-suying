@@ -17,6 +17,16 @@
   keyboardLayout: '18',
 
 
+  # 双拼助记词方案
+  # 启用后：在 14/18/26 键的中文拼音键盘上：
+  #   - shift 键的 swipeUp 用于触发显示助记（若用户已自行配置 shiftButtonParams.swipeUp，则尊重用户设置）
+  #   - 触发后字母键的 swipeUp/swipeDown 显示对应韵母提示，按一次按键即恢复
+  # 可选值：
+  #   'none'  : 关闭
+  #   'flypy' : 小鹤双拼
+  doublePinyinHints: 'flypy',
+
+
   # 数字键盘布局选择，可选值如下：
   # 9 : 九宫格布局
   # row : 数字显示在一行

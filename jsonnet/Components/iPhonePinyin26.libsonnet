@@ -1,11 +1,14 @@
 local buttons = import '../Buttons/Layout26.libsonnet';
 local commonButtons = import '../Buttons/Common.libsonnet';
+local mk = import '../Buttons/_mkButton.libsonnet';
 local toolbarParams = import '../Buttons/Toolbar.libsonnet';
 local settings = import '../Settings.libsonnet';
 local basicStyle = import 'BasicStyle.libsonnet';
 local preedit = import 'Preedit.libsonnet';
 local toolbar = import 'Toolbar.libsonnet';
 local utils = import 'Utils.libsonnet';
+
+local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
 
 local portraitNormalButtonSize = {
   size: { width: '112.5/1125' },
@@ -112,6 +115,13 @@ local getAlphabeticButtonSize(name) =
 
 local newKeyLayout(isDark=false, isPortrait=true, keyboardType=KeyboardType.Chinese) =
   local isAlphabetic = keyboardType == KeyboardType.English;
+  # 仅在非英文模式下，且用户未自定义 shift swipeUp 时，注入"显示助记"触发
+  local shiftParams =
+    if doublePinyinHints != null && !isAlphabetic && !std.objectHas(commonButtons.shiftButton.params, 'swipeUp') then
+      commonButtons.shiftButton.params + {
+        swipeUp: { action: { shortcut: mk.doublePinyinHintsShortcut }, text: '助记' },
+      }
+    else commonButtons.shiftButton.params;
   {
     keyboardHeight: if isPortrait then commonButtons.keyboardHeight.portrait else commonButtons.keyboardHeight.landscape,
     keyboardStyle: utils.newBackgroundStyle(style=basicStyle.keyboardBackgroundStyleName),
@@ -147,7 +157,7 @@ local newKeyLayout(isDark=false, isPortrait=true, keyboardType=KeyboardType.Chin
           { width: '151/168.75', alignment: 'left' },
       }
     )
-    + utils.processButtonParams(isAlphabetic, commonButtons.shiftButton.params)
+    + utils.processButtonParams(isAlphabetic, shiftParams)
   )
 
   + basicStyle.newSystemButton(
