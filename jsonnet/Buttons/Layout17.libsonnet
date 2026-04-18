@@ -5,161 +5,42 @@
 # 长按皮肤，选择「运行 main.jsonnet」生效。
 #
 # 包含中文17键布局的按键
+#
+# 行式 spec 写法详见 _mkButton.libsonnet 注释。
+# 17 键布局的显示文本不是简单的字符序列，因此每行都显式指定 text。
 # =====================================
 
-local colors = import '../Constants/Colors.libsonnet';
-local fonts = import '../Constants/Fonts.libsonnet';
-local settings = import '../Settings.libsonnet';
+local mk = import '_mkButton.libsonnet';
+local sym = mk.sym;
+
+# 键位顺序即为键盘上的显示顺序
+local specs = [
+  # 第一行
+  { chars: 'h', text: 'HP',  swipeUp: '1' },
+  { chars: 's', text: 'Sh',  swipeUp: '2' },
+  { chars: 'z', text: 'Zh',  swipeUp: '3' },
+  { chars: 'b', text: 'B',   swipeUp: '@' },
+  { chars: 'x', text: 'oXv', swipeUp: '^' },
+  { chars: 'm', text: 'MS',  swipeUp: '\\' },
+
+  # 第二行
+  { chars: 'l', text: 'L',   swipeUp: '4' },
+  { chars: 'd', text: 'D',   swipeUp: '5' },
+  { chars: 'y', text: 'Y',   swipeUp: '6' },
+  { chars: 'w', text: 'WZ',  swipeUp: '0' },
+  { chars: 'j', text: 'JK',  swipeUp: ':' },
+  { chars: 'n', text: 'NR',  swipeUp: '"' },
+
+  # 第三行
+  { chars: 'c', text: 'Ch',  swipeUp: '7' },
+  { chars: 'q', text: 'Q~',  swipeUp: '8' },
+  { chars: 'g', text: 'G',   swipeUp: '9' },
+  { chars: 'f', text: 'CF',  swipeUp: '!' },
+  { chars: 't', text: 'T',   swipeUp: '?' },
+];
 
 {
-  local root = self,
-
-  // 按键定义
-  hButton: {
-    name: 'hButton',
-    params: {
-      text: 'HP',
-      action: { character: 'h' },
-      swipeUp: { action: { character: '1' } },
-    },
-  },
-  sButton: {
-    name: 'sButton',
-    params: {
-      text: 'Sh',
-      action: { character: 's' },
-      swipeUp: { action: { character: '2' } },
-    },
-  },
-  zButton: {
-    name: 'zButton',
-    params: {
-      text: 'Zh',
-      action: { character: 'z' },
-      swipeUp: { action: { character: '3' } },
-    },
-  },
-  bButton: {
-    name: 'bButton',
-    params: {
-      text: 'B',
-      action: { character: 'b' },
-      swipeUp: { action: { character: '@' } },
-    },
-  },
-  xButton: {
-    name: 'xButton',
-    params: {
-      text: 'oXv',
-      action: { character: 'x' },
-      swipeUp: { action: { character: '^' } },
-    },
-  },
-  mButton: {
-    name: 'mButton',
-    params: {
-      text: 'MS',
-      action: { character: 'm' },
-      swipeUp: { action: { character: '\\' } },
-    },
-  },
-
-  // 第二行
-  lButton: {
-    name: 'lButton',
-    params: {
-      text: 'L',
-      action: { character: 'l' },
-      swipeUp: { action: { character: '4' } },
-    },
-  },
-  dButton: {
-    name: 'dButton',
-    params: {
-      text: 'D',
-      action: { character: 'd' },
-      swipeUp: { action: { character: '5' } },
-    },
-  },
-  yButton: {
-    name: 'yButton',
-    params: {
-      text: 'Y',
-      action: { character: 'y' },
-      swipeUp: { action: { character: '6' } },
-    },
-  },
-  wButton: {
-    name: 'wButton',
-    params: {
-      text: 'WZ',
-      action: { character: 'w' },
-      swipeUp: { action: { character: '0' } },
-    },
-  },
-  jButton: {
-    name: 'jButton',
-    params: {
-      text: 'JK',
-      action: { character: 'j' },
-      swipeUp: { action: { character: ':' } },
-    },
-  },
-  nButton: {
-    name: 'nButton',
-    params: {
-      text: 'NR',
-      action: { character: 'n' },
-      swipeUp: { action: { character: '"' } },
-    },
-  },
-
-  // 第三行
-  cButton: {
-    name: 'cButton',
-    params: {
-      text: 'Ch',
-      action: { character: 'c' },
-      swipeUp: { action: { character: '7' } },
-    },
-  },
-  qButton: {
-    name: 'qButton',
-    params: {
-      text: 'Q~',
-      action: { character: 'q' },
-      swipeUp: { action: { character: '8' } },
-    },
-  },
-  gButton: {
-    name: 'gButton',
-    params: {
-      text: 'G',
-      action: { character: 'g' },
-      swipeUp: { action: { character: '9' } },
-    },
-  },
-  fButton: {
-    name: 'fButton',
-    params: {
-      text: 'CF',
-      action: { character: 'f' },
-      swipeUp: { action: { character: '!' } },
-    },
-  },
-  tButton: {
-    name: 'tButton',
-    params: {
-      text: 'T',
-      action: { character: 't' },
-      swipeUp: { action: { character: '?' } },
-    },
-  },
-
-
-  letterButtons: [
-    self.hButton, self.sButton, self.zButton, self.bButton, self.xButton, self.mButton,
-    self.lButton, self.dButton, self.yButton, self.wButton, self.jButton, self.nButton,
-    self.cButton, self.qButton, self.gButton, self.fButton, self.tButton,
-  ],
+  [mk.name(s)]: mk.button(s) for s in specs
+} + {
+  letterButtons: [mk.button(s) for s in specs],
 }
