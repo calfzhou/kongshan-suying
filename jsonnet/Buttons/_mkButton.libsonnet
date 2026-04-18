@@ -60,4 +60,28 @@
       } else {}
     ),
   },
+
+  # 全键按键变体：用于 26 键这类完整字母布局。
+  # 与 button() 的差异：
+  #   1. 不默认下发 text 字段，交由下游根据 action / uppercased 状态自动推导
+  #      （Chinese 模式下大写、English 模式下小写等）；如需固定文本仍可在 spec 中指定 text。
+  #   2. 自动根据 chars[0] 派生 uppercased 动作（例如 'q' -> { action: { character: 'Q' } }）。
+  # 其余字段（swipeUp / swipeDown / longPress）行为与 button() 相同。
+  fullKeyButton(spec):: {
+    name: $.name(spec),
+    params: (
+      if std.objectHas(spec, 'text') then { text: spec.text } else {}
+    ) + {
+      action: { character: spec.chars[0] },
+      uppercased: { action: { character: std.asciiUpper(spec.chars[0]) } },
+    } + (
+      if std.objectHas(spec, 'swipeUp') then { swipeUp: $.expand(spec.swipeUp) } else {}
+    ) + (
+      if std.objectHas(spec, 'swipeDown') then { swipeDown: $.expand(spec.swipeDown) } else {}
+    ) + (
+      if std.objectHas(spec, 'longPress') then {
+        longPress: [$.expand(e) for e in spec.longPress],
+      } else {}
+    ),
+  },
 }

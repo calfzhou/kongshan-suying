@@ -5,358 +5,73 @@
 # 长按皮肤，选择「运行 main.jsonnet」生效。
 #
 # 包含中文26键布局和英文26键布局中的字母键
+#
+# 行式 spec 写法详见 _mkButton.libsonnet 注释。
+# 26 键为完整字母布局，使用 mk.fullKeyButton：
+#   - 自动派生 uppercased 动作
+#   - text 不下发，由下游根据当前模式（中/英、大/小写）渲染
 # =====================================
 
-local colors = import '../Constants/Colors.libsonnet';
-local fonts = import '../Constants/Fonts.libsonnet';
-local settings = import '../Settings.libsonnet';
+local mk = import '_mkButton.libsonnet';
+local sym = mk.sym;
+local fk = mk.fullKeyButton;
+
+# 键位顺序即为键盘上的显示顺序
+local specs = [
+  # 第一行
+  { chars: 'q', swipeUp: '1',
+    swipeDown: { action: 'tab', systemImageName: 'arrow.right.to.line' },
+    longPress: ['Q'] },
+  { chars: 'w', swipeUp: '2', longPress: ['W'] },
+  { chars: 'e', swipeUp: '3', longPress: ['E'] },
+  { chars: 'r', swipeUp: '4', longPress: ['R'] },
+  { chars: 't', swipeUp: '5', longPress: ['T'] },
+  { chars: 'y', swipeUp: '6', longPress: ['Y'] },
+  { chars: 'u', swipeUp: '7', longPress: ['U'] },
+  { chars: 'i', swipeUp: '8', swipeDown: '|', longPress: ['I'] },
+  { chars: 'o', swipeUp: '9', swipeDown: '<', longPress: ['O'] },
+  { chars: 'p', swipeUp: '0', swipeDown: '>', longPress: ['P'] },
+
+  # 第二行
+  { chars: 'a', swipeUp: '!',
+    swipeDown: { action: { shortcut: '#selectText' }, text: '全', systemImageName: 'selection.pin.in.out' },
+    longPress: [
+      { action: { character: 'A' }, selected: true },
+      { action: { shortcut: '#左手模式' }, systemImageName: 'keyboard.onehanded.left' },
+    ] },
+  { chars: 's', swipeUp: '^', swipeDown: '%', longPress: ['S'] },
+  { chars: 'd', swipeUp: '/', swipeDown: '\\', longPress: ['D'] },
+  { chars: 'f', swipeUp: ';', swipeDown: ':', longPress: ['F'] },
+  { chars: 'g', swipeUp: '(', swipeDown: ')', longPress: ['G'] },
+  { chars: 'h', swipeUp: '-', swipeDown: '_', longPress: ['H'] },
+  { chars: 'j', swipeUp: '#', swipeDown: '+', longPress: ['J'] },
+  { chars: 'k', swipeUp: '{', swipeDown: '}', longPress: ['K'] },
+  { chars: 'l', swipeUp: '"', swipeDown: "'",
+    longPress: [
+      { action: { shortcut: '#右手模式' }, systemImageName: 'keyboard.onehanded.right' },
+      { action: { character: 'L' }, selected: true },
+    ] },
+
+  # 第三行
+  { chars: 'z', swipeUp: '@',
+    swipeDown: { action: { shortcut: '#undo' }, text: '撤', systemImageName: 'arrow.uturn.left' },
+    longPress: ['Z'] },
+  { chars: 'x', swipeUp: '*',
+    swipeDown: { action: { shortcut: '#cut' }, text: '剪', systemImageName: 'scissors' },
+    longPress: ['X'] },
+  { chars: 'c', swipeUp: '`',
+    swipeDown: { action: { shortcut: '#copy' }, text: '复', systemImageName: 'doc.on.doc' },
+    longPress: ['C'] },
+  { chars: 'v', swipeUp: '=',
+    swipeDown: { action: { shortcut: '#paste' }, text: '贴', systemImageName: 'doc.on.clipboard' },
+    longPress: ['V'] },
+  { chars: 'b', swipeUp: '[', swipeDown: ']', longPress: ['B'] },
+  { chars: 'n', swipeUp: '&', swipeDown: '~', longPress: ['N'] },
+  { chars: 'm', swipeUp: '?', swipeDown: '$', longPress: ['M'] },
+];
 
 {
-  local root = self,
-
-  // 按键定义
-  qButton: {
-    name: 'qButton',
-    params: {
-      action: { character: 'q' },
-      uppercased: { action: { character: 'Q' } },
-      swipeUp: { action: { character: '1' } },
-      swipeDown: {
-        action: 'tab',
-        systemImageName: 'arrow.right.to.line'
-      },
-      longPress: [
-        { action: { character: 'Q' } },
-      ],
-    },
-  },
-  wButton: {
-    name: 'wButton',
-    params: {
-      action: { character: 'w' },
-      uppercased: { action: { character: 'W' } },
-      swipeUp: { action: { character: '2' } },
-      longPress: [
-        { action: { character: 'W' } },
-      ],
-    },
-  },
-  eButton: {
-    name: 'eButton',
-    params: {
-      action: { character: 'e' },
-      uppercased: { action: { character: 'E' } },
-      swipeUp: { action: { character: '3' } },
-      longPress: [
-        { action: { character: 'E' } },
-      ],
-    },
-  },
-  rButton: {
-    name: 'rButton',
-    params: {
-      action: { character: 'r' },
-      uppercased: { action: { character: 'R' } },
-      swipeUp: { action: { character: '4' } },
-      longPress: [
-        { action: { character: 'R' } },
-      ],
-    },
-  },
-  tButton: {
-    name: 'tButton',
-    params: {
-      action: { character: 't' },
-      uppercased: { action: { character: 'T' } },
-      swipeUp: { action: { character: '5' } },
-      longPress: [
-        { action: { character: 'T' } },
-      ],
-    },
-  },
-  yButton: {
-    name: 'yButton',
-    params: {
-      action: { character: 'y' },
-      uppercased: { action: { character: 'Y' } },
-      swipeUp: { action: { character: '6' } },
-      longPress: [
-        { action: { character: 'Y' } },
-      ],
-    },
-  },
-  uButton: {
-    name: 'uButton',
-    params: {
-      action: { character: 'u' },
-      uppercased: { action: { character: 'U' } },
-      swipeUp: { action: { character: '7' } },
-      longPress: [
-        { action: { character: 'U' } },
-      ],
-    },
-  },
-  iButton: {
-    name: 'iButton',
-    params: {
-      action: { character: 'i' },
-      uppercased: { action: { character: 'I' } },
-      swipeUp: { action: { character: '8' } },
-      swipeDown: { action: { character: '|' } },
-      longPress: [
-        { action: { character: 'I' } },
-      ],
-    },
-  },
-  oButton: {
-    name: 'oButton',
-    params: {
-      action: { character: 'o' },
-      uppercased: { action: { character: 'O' } },
-      swipeUp: { action: { character: '9' } },
-      swipeDown: { action: { character: '<' } },
-      longPress: [
-        { action: { character: 'O' } },
-      ],
-    },
-  },
-  pButton: {
-    name: 'pButton',
-    params: {
-      action: { character: 'p' },
-      uppercased: { action: { character: 'P' } },
-      swipeUp: { action: { character: '0' } },
-      swipeDown: { action: { character: '>' } },
-      longPress: [
-        { action: { character: 'P' } },
-      ],
-    },
-  },
-
-  // 第二行字母键 (ASDF)
-  aButton: {
-    name: 'aButton',
-    params: {
-      action: { character: 'a' },
-      uppercased: { action: { character: 'A' } },
-      swipeUp: { action: { character: '!' } },
-      swipeDown: {
-        action: { shortcut: '#selectText' },
-        text: '全',
-        systemImageName: 'selection.pin.in.out',
-      },
-      longPress: [
-        { action: { character: 'A' }, selected: true },
-        { action: { shortcut: '#左手模式' }, systemImageName: 'keyboard.onehanded.left' },
-      ],
-    },
-  },
-  sButton: {
-    name: 'sButton',
-    params: {
-      action: { character: 's' },
-      uppercased: { action: { character: 'S' } },
-      swipeUp: { action: { character: '^' } },
-      swipeDown: { action: { character: '%' } },
-      longPress: [
-        { action: { character: 'S' } },
-      ],
-    },
-  },
-  dButton: {
-    name: 'dButton',
-    params: {
-      action: { character: 'd' },
-      uppercased: { action: { character: 'D' } },
-      swipeUp: { action: { character: '/' } },
-      swipeDown: { action: { character: '\\' } },
-      longPress: [
-        { action: { character: 'D' } },
-      ],
-    },
-  },
-  fButton: {
-    name: 'fButton',
-    params: {
-      action: { character: 'f' },
-      uppercased: { action: { character: 'F' } },
-      swipeUp: { action: { character: ';' } },
-      swipeDown: { action: { character: ':' } },
-      longPress: [
-        { action: { character: 'F' } },
-      ],
-    },
-  },
-  gButton: {
-    name: 'gButton',
-    params: {
-      action: { character: 'g' },
-      uppercased: { action: { character: 'G' } },
-      swipeUp: { action: { character: '(' } },
-      swipeDown: { action: { character: ')' } },
-      longPress: [
-        { action: { character: 'G' } },
-      ],
-    },
-  },
-  hButton: {
-    name: 'hButton',
-    params: {
-      action: { character: 'h' },
-      uppercased: { action: { character: 'H' } },
-      swipeUp: { action: { character: '-' } },
-      swipeDown: { action: { character: '_' } },
-      longPress: [
-        { action: { character: 'H' } },
-      ],
-    },
-  },
-  jButton: {
-    name: 'jButton',
-    params: {
-      action: { character: 'j' },
-      uppercased: { action: { character: 'J' } },
-      swipeUp: { action: { character: '#' } },
-      swipeDown: { action: { character: '+' } },
-      longPress: [
-        { action: { character: 'J' } },
-      ],
-    },
-  },
-  kButton: {
-    name: 'kButton',
-    params: {
-      action: { character: 'k' },
-      uppercased: { action: { character: 'K' } },
-      swipeUp: { action: { character: '{' } },
-      swipeDown: { action: { character: '}' } },
-      longPress: [
-        { action: { character: 'K' } },
-      ],
-    },
-  },
-  lButton: {
-    name: 'lButton',
-    params: {
-      action: { character: 'l' },
-      uppercased: { action: { character: 'L' } },
-      swipeUp: { action: { character: '"' } },
-      swipeDown: { action: { character: "'" } },
-      longPress: [
-        { action: { shortcut: '#右手模式' }, systemImageName: 'keyboard.onehanded.right' },
-        { action: { character: 'L' }, selected: true },
-      ],
-    },
-  },
-
-  // 第三行字母键 (ZXCV)
-  zButton: {
-    name: 'zButton',
-    params: {
-      action: { character: 'z' },
-      uppercased: { action: { character: 'Z' } },
-      swipeUp: { action: { character: '@' } },
-      swipeDown: {
-        action: { shortcut: '#undo' },
-        text: '撤',
-        systemImageName: 'arrow.uturn.left'
-      },
-      longPress: [
-        { action: { character: 'Z' } },
-      ],
-    },
-  },
-  xButton: {
-    name: 'xButton',
-    params: {
-      action: { character: 'x' },
-      uppercased: { action: { character: 'X' } },
-      swipeUp: { action: { character: '*' } },
-      swipeDown: {
-        action: { shortcut: '#cut' },
-        text: '剪',
-        systemImageName: 'scissors'
-      },
-      longPress: [
-        { action: { character: 'X' } },
-      ],
-    },
-  },
-  cButton: {
-    name: 'cButton',
-    params: {
-      action: { character: 'c' },
-      uppercased: { action: { character: 'C' } },
-      swipeUp: { action: { character: '`' } },
-      swipeDown: {
-        action: { shortcut: '#copy' },
-        text: '复',
-        systemImageName: 'doc.on.doc'
-      },
-      longPress: [
-        { action: { character: 'C' } },
-      ],
-    },
-  },
-  vButton: {
-    name: 'vButton',
-    params: {
-      action: { character: 'v' },
-      uppercased: { action: { character: 'V' } },
-      swipeUp: { action: { character: '=' } },
-      swipeDown: {
-        action: { shortcut: '#paste' },
-        text: '贴',
-        systemImageName: 'doc.on.clipboard'
-      },
-      longPress: [
-        { action: { character: 'V' } },
-      ],
-    },
-  },
-  bButton: {
-    name: 'bButton',
-    params: {
-      action: { character: 'b' },
-      uppercased: { action: { character: 'B' } },
-      swipeUp: { action: { character: '[' } },
-      swipeDown: { action: { character: ']' } },
-      longPress: [
-        { action: { character: 'B' } },
-      ],
-    },
-  },
-  nButton: {
-    name: 'nButton',
-    params: {
-      action: { character: 'n' },
-      uppercased: { action: { character: 'N' } },
-      swipeUp: { action: { character: '&' } },
-      swipeDown: { action: { character: '~' } },
-      longPress: [
-        { action: { character: 'N' } },
-      ],
-    },
-  },
-  mButton: {
-    name: 'mButton',
-    params: {
-      action: { character: 'm' },
-      uppercased: { action: { character: 'M' } },
-      swipeUp: { action: { character: '?' } },
-      swipeDown: { action: { character: '$' } },
-      longPress: [
-        { action: { character: 'M' } },
-      ],
-    },
-  },
-
-  letterButtons: [
-    self.qButton, self.wButton, self.eButton, self.rButton, self.tButton,
-    self.yButton, self.uButton, self.iButton, self.oButton, self.pButton,
-    self.aButton, self.sButton, self.dButton, self.fButton, self.gButton,
-    self.hButton, self.jButton, self.kButton, self.lButton,
-    self.zButton, self.xButton, self.cButton, self.vButton, self.bButton,
-    self.nButton, self.mButton,
-  ],
+  [mk.name(s)]: fk(s) for s in specs
+} + {
+  letterButtons: [fk(s) for s in specs],
 }
