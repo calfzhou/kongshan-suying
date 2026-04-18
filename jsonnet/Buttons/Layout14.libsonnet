@@ -5,148 +5,44 @@
 # 长按皮肤，选择「运行 main.jsonnet」生效。
 #
 # 包含中文14键布局的按键
+#
+# 行式 spec 写法详见 _mkButton.libsonnet 注释。
 # =====================================
 
-local colors = import '../Constants/Colors.libsonnet';
-local fonts = import '../Constants/Fonts.libsonnet';
-local settings = import '../Settings.libsonnet';
+local mk = import '_mkButton.libsonnet';
+local sym = mk.sym;
+
+# 键位顺序即为键盘上的显示顺序
+local specs = [
+  # 第一行
+  { chars: 'qw', swipeUp: '1' },
+  { chars: 'er', swipeUp: '2' },
+  { chars: 'ty', swipeUp: '3' },
+  { chars: 'ui', swipeUp: '4' },
+  { chars: 'op', swipeUp: '5' },
+
+  # 第二行
+  { chars: 'as', swipeUp: '6',
+    longPress: [
+      { action: { shortcut: '#左手模式' }, systemImageName: 'keyboard.onehanded.left' },
+    ] },
+  { chars: 'df', swipeUp: '7' },
+  { chars: 'gh', swipeUp: '8' },
+  { chars: 'jk', swipeUp: '9' },
+  { chars: 'l',  swipeUp: '0',
+    longPress: [
+      { action: { shortcut: '#右手模式' }, systemImageName: 'keyboard.onehanded.right' },
+    ] },
+
+  # 第三行
+  { chars: 'zx', swipeUp: '@' },
+  { chars: 'cv', swipeUp: '"' },
+  { chars: 'bn', swipeUp: '!' },
+  { chars: 'm',  swipeUp: '?' },
+];
 
 {
-  local root = self,
-
-  // 按键定义
-  qButton: {
-    name: 'qButton',
-    params: {
-      text: 'q w',
-      action: { character: 'q' },
-      swipeUp: { action: { character: '1' } },
-    },
-  },
-  eButton: {
-    name: 'eButton',
-    params: {
-      text: 'e r',
-      action: { character: 'e' },
-      swipeUp: { action: { character: '2' } },
-    },
-  },
-  tButton: {
-    name: 'tButton',
-    params: {
-      text: 't y',
-      action: { character: 't' },
-      swipeUp: { action: { character: '3' } },
-    },
-  },
-  uButton: {
-    name: 'uButton',
-    params: {
-      text: 'u i',
-      action: { character: 'u' },
-      swipeUp: { action: { character: '4' } },
-    },
-  },
-  oButton: {
-    name: 'oButton',
-    params: {
-      text: 'o p',
-      action: { character: 'o' },
-      swipeUp: { action: { character: '5' } },
-    },
-  },
-
-  // 第二行字母键 (ASDF)
-  aButton: {
-    name: 'aButton',
-    params: {
-      text: 'a s',
-      action: { character: 'a' },
-      swipeUp: { action: { character: '6' } },
-      longPress: [
-        {
-          action: { shortcut: '#左手模式' },
-          systemImageName: 'keyboard.onehanded.left',
-        },
-      ],
-    },
-  },
-  dButton: {
-    name: 'dButton',
-    params: {
-      text: 'd f',
-      action: { character: 'd' },
-      swipeUp: { action: { character: '7' } },
-    },
-  },
-  gButton: {
-    name: 'gButton',
-    params: {
-      text: 'g h',
-      action: { character: 'g' },
-      swipeUp: { action: { character: '8' } },
-    },
-  },
-  jButton: {
-    name: 'jButton',
-    params: {
-      text: 'j k',
-      action: { character: 'j' },
-      swipeUp: { action: { character: '9' } },
-    },
-  },
-  lButton: {
-    name: 'lButton',
-    params: {
-      text: 'l',
-      action: { character: 'l' },
-      swipeUp: { action: { character: '0' } },
-      longPress: [
-        {
-          action: { shortcut: '#右手模式' },
-          systemImageName: 'keyboard.onehanded.right',
-        },
-      ],
-    },
-  },
-
-  // 第三行字母键 (ZXCV)
-  zButton: {
-    name: 'zButton',
-    params: {
-      text: 'z x',
-      action: { character: 'z' },
-      swipeUp: { action: { character: '@' } },
-    },
-  },
-  cButton: {
-    name: 'cButton',
-    params: {
-      text: 'c v',
-      action: { character: 'c' },
-      swipeUp: { action: { character: '"' } },
-    },
-  },
-  bButton: {
-    name: 'bButton',
-    params: {
-      text: 'b n',
-      action: { character: 'b' },
-      swipeUp: { action: { character: '!' } },
-    },
-  },
-  mButton: {
-    name: 'mButton',
-    params: {
-      text: 'm',
-      action: { character: 'm' },
-      swipeUp: { action: { character: '?' } },
-    },
-  },
-
-  letterButtons: [
-    self.qButton, self.eButton, self.tButton, self.uButton, self.oButton,
-    self.aButton, self.dButton, self.gButton, self.jButton, self.lButton,
-    self.zButton, self.cButton, self.bButton, self.mButton,
-  ],
+  [mk.name(s)]: mk.button(s) for s in specs
+} + {
+  letterButtons: [mk.button(s) for s in specs],
 }
