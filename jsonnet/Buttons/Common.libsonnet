@@ -51,6 +51,11 @@ local settings = import '../Settings.libsonnet';
           ['rimeSchemaChangedNotification']
         else []),
 
+      swipeDown: {
+        action: { shortcut: '#方案切换' },
+        text: '',
+      },
+
       whenPreeditChanged: {
         text: settings.spaceButtonComposingText,
         fontSize: fonts.systemButtonTextFontSize,
@@ -58,6 +63,10 @@ local settings = import '../Settings.libsonnet';
         swipeUp: {
           action: { shortcut: '#次选上屏' },
           text: '次选',
+        },
+        swipeDown: {
+          action: { shortcut: '#三选上屏' },
+          text: '三选',
         },
       },
     },
@@ -78,8 +87,10 @@ local settings = import '../Settings.libsonnet';
       repeatAction: 'backspace',
       systemImageName: 'delete.left',
       highlightSystemImageName: 'delete.left.fill',
-      swipeUp: { action: { shortcut: '#deleteText'} },
-      swipeDown: { action: { shortcut: '#undo' } },
+
+      whenPreeditChanged: {
+        swipeUp: { action: { shortcut: '#重输' }, text: 'esc' },
+      },
     },
   },
 
@@ -97,16 +108,7 @@ local settings = import '../Settings.libsonnet';
         'returnKeyTypeChangedNotification',
       ],
 
-      swipeUp: { action: { shortcut: '#行首' } },
-      swipeDown: { action: { shortcut: '#行尾' } },
-
-      longPress: [
-        {
-          action: { shortcut: '#换行' },
-          systemImageName: 'return',
-          text: '换行',
-        },
-      ],
+      swipeUp: { action: { shortcut: '#换行' }, text: '↵' },
 
       whenPreeditChanged: {
         text: '确认',
@@ -164,8 +166,8 @@ local settings = import '../Settings.libsonnet';
     params: {
       action: { keyboardType: 'numeric' },
       text: if settings.preferIcon then '123' else '数字',
-      swipeUp: { action: { keyboardType: 'symbolic' } },
-      swipeDown: { action: { keyboardType: 'emojis' } },
+      swipeUp: { action: { keyboardType: 'symbolic' }, systemImageName: 'number' },
+      swipeDown: { action: { keyboardType: 'emojis' }, systemImageName: 'face.smiling' },
     }
     + ( // 对于 iPad 设备，长按数字键可以切换到 iOS 系统键盘列表中的下一个键盘
       if settings.iPad then {
@@ -195,10 +197,10 @@ local settings = import '../Settings.libsonnet';
     params: {
       action: { keyboardType: 'alphabetic' },
       assetImageName: 'chineseState2',
-      swipeUp: { action: { shortcut: '#方案切换' } },
 
       [if !std.startsWith(settings.keyboardLayout, '26') then 'swipeDown']: {
         action: { keyboardType: 'temp26Key' },
+        systemImageName: 'keyboard',
       }
     },
   },
@@ -216,7 +218,6 @@ local settings = import '../Settings.libsonnet';
     params: {
       action: { shortcut: '#中英切换' },
       assetImageName: 'chineseState2',
-      swipeUp: { action: { shortcut: '#方案切换' } },
 
       whenRimeOptionChanged: {
         optionName: 'ascii_mode',
