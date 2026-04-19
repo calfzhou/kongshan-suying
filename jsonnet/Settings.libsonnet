@@ -123,7 +123,9 @@
     uppercased: { systemImageName: 'shift.fill', },
     capsLocked: { systemImageName: 'capslock.fill', },
 
-    whenPreeditChanged: {
+    # 「分词」仅在全拼模式下有意义；启用双拼助记词时（即 doublePinyinHints != 'none'），
+    # 双拼每个音都是固定两个字母，不需要分词，故不启用此键。
+    [if $.doublePinyinHints == 'none' then 'whenPreeditChanged']: {
       action: { character: "'" },
       systemImageName: 'square.and.line.vertical.and.square',
       text: '分词',
