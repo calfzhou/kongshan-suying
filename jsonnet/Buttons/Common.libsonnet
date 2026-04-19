@@ -167,7 +167,7 @@ local settings = import '../Settings.libsonnet';
       action: { keyboardType: 'numeric' },
       text: if settings.preferIcon then '123' else '数字',
       swipeUp: { action: { keyboardType: 'symbolic' }, systemImageName: 'number' },
-      swipeDown: { action: { keyboardType: 'emojis' }, systemImageName: 'face.smiling' },
+      swipeDown: { action: { keyboardType: 'emojis' }, systemImageName: 'face.dashed' },
     }
     + ( // 对于 iPad 设备，长按数字键可以切换到 iOS 系统键盘列表中的下一个键盘
       if settings.iPad then {
