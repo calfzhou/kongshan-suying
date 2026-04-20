@@ -124,6 +124,12 @@
     params: $.withDoublePinyinHints({
         text: $.defaultText(spec),
         action: { character: spec.chars[0] },
+        # shift / capsLock 状态下，仅显示并输入主字符的大写形式
+        # （多字符按键如 'we' 在大写态下不再显示 'W E'，避免和动作不一致）。
+        uppercased: {
+          text: std.asciiUpper(spec.chars[0]),
+          action: { character: std.asciiUpper(spec.chars[0]) },
+        },
     } + (
       if std.objectHas(spec, 'swipeUp') then { swipeUp: $.expand(spec.swipeUp) } else {}
     ) + (

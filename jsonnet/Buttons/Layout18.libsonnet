@@ -14,7 +14,6 @@
 # =====================================
 
 local mk = import '_mkButton.libsonnet';
-local sym = mk.sym;
 local settings = import '../Settings.libsonnet';
 local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
 
@@ -28,35 +27,38 @@ local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').ge
 #   - u 走斜杠对 / \；a 留 < / |（< 兼顾《》），m 下滑给到最常用的 ?。
 local specs = [
   # 第一行
-  { chars: 'q',  swipeUp: '`',  swipeDown: '~' },
-  { chars: 'we', swipeUp: '1',  swipeDown: '!' },
-  { chars: 'rt', swipeUp: '2',  swipeDown: '@' },
-  { chars: 'y',  swipeUp: '3',  swipeDown: '#' },
-  { chars: 'u',  swipeUp: '/',  swipeDown: '\\' },
-  { chars: 'io', swipeUp: '-',  swipeDown: '_' },
-  { chars: 'p',  swipeUp: '=',  swipeDown: '+' },
+  { chars: 'q',  swipeUp: '`',  swipeDown: '~', longPress: ['Q'] },
+  { chars: 'we', swipeUp: '1',  swipeDown: '!', longPress: ['e', 'W', 'E'] },
+  { chars: 'rt', swipeUp: '2',  swipeDown: '@', longPress: ['t', 'R', 'T'] },
+  { chars: 'y',  swipeUp: '3',  swipeDown: '#', longPress: ['Y'] },
+  { chars: 'u',  swipeUp: '/',  swipeDown: '\\', longPress: ['U'] },
+  { chars: 'io', swipeUp: '-',  swipeDown: '_', longPress: ['o', 'I', 'O'] },
+  { chars: 'p',  swipeUp: '=',  swipeDown: '+', longPress: ['P'] },
 
   # 第二行
   { chars: 'a',  swipeUp: '<',  swipeDown: '|',
     longPress: [
+      'A',
       { action: { shortcut: '#左手模式' }, systemImageName: 'keyboard.onehanded.left' },
       { action: 'tab', systemImageName: 'arrow.right.to.line', text: 'Tab' },
+      '>',
     ] },
-  { chars: 'sd', swipeUp: '4',  swipeDown: '$' },
-  { chars: 'fg', swipeUp: '5',  swipeDown: '%' },
-  { chars: 'h',  swipeUp: '6',  swipeDown: '^' },
-  { chars: 'jk', swipeUp: ';',  swipeDown: ':' },
+  { chars: 'sd', swipeUp: '4',  swipeDown: '$', longPress: ['d', 'S', 'D'] },
+  { chars: 'fg', swipeUp: '5',  swipeDown: '%', longPress: ['g', 'F', 'G'] },
+  { chars: 'h',  swipeUp: '6',  swipeDown: '^', longPress: ['H'] },
+  { chars: 'jk', swipeUp: ';',  swipeDown: ':', longPress: ['k', 'J', 'K'] },
   { chars: 'l',  swipeUp: "'",  swipeDown: '"',
     longPress: [
+      'L',
       { action: { shortcut: '#右手模式' }, systemImageName: 'keyboard.onehanded.right' },
     ] },
 
   # 第三行
-  { chars: 'z',  swipeUp: '{',  swipeDown: '[' },
-  { chars: 'xc', swipeUp: '7',  swipeDown: '&' },
-  { chars: 'v',  swipeUp: '8',  swipeDown: '*' },
-  { chars: 'bn', swipeUp: '9',  swipeDown: '(' },
-  { chars: 'm',  swipeUp: '0',  swipeDown: '?' },
+  { chars: 'z',  swipeUp: '{',  swipeDown: '[', longPress: ['Z', '}', ']'] },
+  { chars: 'xc', swipeUp: '7',  swipeDown: '&', longPress: ['c', 'X', 'C'] },
+  { chars: 'v',  swipeUp: '8',  swipeDown: '*', longPress: ['V'] },
+  { chars: 'bn', swipeUp: '9',  swipeDown: '(', longPress: ['n', 'B', 'N', ')'] },
+  { chars: 'm',  swipeUp: '0',  swipeDown: '?', longPress: ['M'] },
 ];
 
 {
