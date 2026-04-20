@@ -24,7 +24,7 @@ local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').ge
 #   - 第一行字母按 PC 数字排：上滑数字、下滑对应 shift 符号。
 #   - 第二行作为「符号家排」：a `~、s -_、d =+、f ;:、l '" 等沿用 PC normal/shift 对；
 #     g 落 / \；h/j/k 安排成对的开闭括号 [] {} <>。
-#   - 第三行除剪/复/贴（x/c/v）和右下角 m 的 ? 外保留干净。
+#   - 第三行除剪/复/贴（x/c/v）和 b 的 |、m 的 ? 外保留干净。
 #   - 自动补齐右半的成对符号 () [] {} <> "" '' 由输入法处理；
 #     此处显式给出 ] } 等右半，是为了利用 26 键多出的滑动位、并方便已知光标位置时直接输入。
 local specs = [
@@ -70,7 +70,7 @@ local specs = [
   { chars: 'v',
     swipeDown: { action: { shortcut: '#paste' }, text: '贴', systemImageName: 'doc.on.clipboard' },
     longPress: ['V'] },
-  { chars: 'b', longPress: ['B'] },
+  { chars: 'b', swipeDown: '|', longPress: ['B'] },
   { chars: 'n', longPress: ['N'] },
   { chars: 'm', swipeDown: '?', longPress: ['M'] },
 ];
