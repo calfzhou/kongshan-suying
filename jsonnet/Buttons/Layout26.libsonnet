@@ -19,57 +19,60 @@ local settings = import '../Settings.libsonnet';
 local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
 
 # 键位顺序即为键盘上的显示顺序
+#
+# swipeUp / swipeDown 排布原则（参考 PC 物理键盘）：
+#   - 第一行字母按 PC 数字排：上滑数字、下滑对应 shift 符号。
+#   - 第二行作为「符号家排」：a `~、s -_、d =+、f ;:、l '" 等沿用 PC normal/shift 对；
+#     g 落 / \；h/j/k 安排成对的开闭括号 [] {} <>。
+#   - 第三行除剪/复/贴（x/c/v）和右下角 m 的 ? 外保留干净。
+#   - 自动补齐右半的成对符号 () [] {} <> "" '' 由输入法处理；
+#     此处显式给出 ] } 等右半，是为了利用 26 键多出的滑动位、并方便已知光标位置时直接输入。
 local specs = [
   # 第一行
-  { chars: 'q', swipeUp: '1',
-    swipeDown: { action: 'tab', systemImageName: 'arrow.right.to.line' },
-    longPress: ['Q'] },
-  { chars: 'w', swipeUp: '2', longPress: ['W'] },
-  { chars: 'e', swipeUp: '3', longPress: ['E'] },
-  { chars: 'r', swipeUp: '4', longPress: ['R'] },
-  { chars: 't', swipeUp: '5', longPress: ['T'] },
-  { chars: 'y', swipeUp: '6', longPress: ['Y'] },
-  { chars: 'u', swipeUp: '7', longPress: ['U'] },
-  { chars: 'i', swipeUp: '8', swipeDown: '|', longPress: ['I'] },
-  { chars: 'o', swipeUp: '9', swipeDown: '<', longPress: ['O'] },
-  { chars: 'p', swipeUp: '0', swipeDown: '>', longPress: ['P'] },
+  { chars: 'q', swipeUp: '1', swipeDown: '!', longPress: ['Q'] },
+  { chars: 'w', swipeUp: '2', swipeDown: '@', longPress: ['W'] },
+  { chars: 'e', swipeUp: '3', swipeDown: '#', longPress: ['E'] },
+  { chars: 'r', swipeUp: '4', swipeDown: '$', longPress: ['R'] },
+  { chars: 't', swipeUp: '5', swipeDown: '%', longPress: ['T'] },
+  { chars: 'y', swipeUp: '6', swipeDown: '^', longPress: ['Y'] },
+  { chars: 'u', swipeUp: '7', swipeDown: '&', longPress: ['U'] },
+  { chars: 'i', swipeUp: '8', swipeDown: '*', longPress: ['I'] },
+  { chars: 'o', swipeUp: '9', swipeDown: '(', longPress: ['O'] },
+  { chars: 'p', swipeUp: '0', swipeDown: ')', longPress: ['P'] },
 
   # 第二行
-  { chars: 'a', swipeUp: '!',
-    swipeDown: { action: { shortcut: '#selectText' }, text: '全', systemImageName: 'selection.pin.in.out' },
+  { chars: 'a', swipeUp: '`', swipeDown: '~',
     longPress: [
       { action: { character: 'A' }, selected: true },
       { action: { shortcut: '#左手模式' }, systemImageName: 'keyboard.onehanded.left' },
     ] },
-  { chars: 's', swipeUp: '^', swipeDown: '%', longPress: ['S'] },
-  { chars: 'd', swipeUp: '/', swipeDown: '\\', longPress: ['D'] },
+  { chars: 's', swipeUp: '-', swipeDown: '_', longPress: ['S'] },
+  { chars: 'd', swipeUp: '=', swipeDown: '+', longPress: ['D'] },
   { chars: 'f', swipeUp: ';', swipeDown: ':', longPress: ['F'] },
-  { chars: 'g', swipeUp: '(', swipeDown: ')', longPress: ['G'] },
-  { chars: 'h', swipeUp: '-', swipeDown: '_', longPress: ['H'] },
-  { chars: 'j', swipeUp: '#', swipeDown: '+', longPress: ['J'] },
-  { chars: 'k', swipeUp: '{', swipeDown: '}', longPress: ['K'] },
-  { chars: 'l', swipeUp: '"', swipeDown: "'",
+  { chars: 'g', swipeUp: '/', swipeDown: '\\', longPress: ['G'] },
+  { chars: 'h', swipeUp: '[', swipeDown: ']', longPress: ['H'] },
+  { chars: 'j', swipeUp: '{', swipeDown: '}', longPress: ['J'] },
+  { chars: 'k', swipeUp: '<', swipeDown: '>', longPress: ['K'] },
+  { chars: 'l', swipeUp: "'", swipeDown: '"',
     longPress: [
       { action: { shortcut: '#右手模式' }, systemImageName: 'keyboard.onehanded.right' },
       { action: { character: 'L' }, selected: true },
     ] },
 
   # 第三行
-  { chars: 'z', swipeUp: '@',
-    swipeDown: { action: { shortcut: '#undo' }, text: '撤', systemImageName: 'arrow.uturn.left' },
-    longPress: ['Z'] },
-  { chars: 'x', swipeUp: '*',
+  { chars: 'z', longPress: ['Z'] },
+  { chars: 'x',
     swipeDown: { action: { shortcut: '#cut' }, text: '剪', systemImageName: 'scissors' },
     longPress: ['X'] },
-  { chars: 'c', swipeUp: '`',
+  { chars: 'c',
     swipeDown: { action: { shortcut: '#copy' }, text: '复', systemImageName: 'doc.on.doc' },
     longPress: ['C'] },
-  { chars: 'v', swipeUp: '=',
+  { chars: 'v',
     swipeDown: { action: { shortcut: '#paste' }, text: '贴', systemImageName: 'doc.on.clipboard' },
     longPress: ['V'] },
-  { chars: 'b', swipeUp: '[', swipeDown: ']', longPress: ['B'] },
-  { chars: 'n', swipeUp: '&', swipeDown: '~', longPress: ['N'] },
-  { chars: 'm', swipeUp: '?', swipeDown: '$', longPress: ['M'] },
+  { chars: 'b', longPress: ['B'] },
+  { chars: 'n', longPress: ['N'] },
+  { chars: 'm', swipeDown: '?', longPress: ['M'] },
 ];
 
 {

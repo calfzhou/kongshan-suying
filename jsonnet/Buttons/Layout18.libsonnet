@@ -25,7 +25,7 @@ local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').ge
 #   - 整键搬运：常见符号键的 normal/shift 对（q `~、i -_、p =+、j ;:、l '"）。
 #   - 自动补全的右半边（) ] } > " '）不占用滑动位，由输入法补齐。
 #   - z 安排开括号 { / [（{ 在中文模式下还会被翻译成「）。
-#   - u 走斜杠对 / \，m 给 0/| 收尾，a 留 <? 兼顾《》与问号。
+#   - u 走斜杠对 / \；a 留 < / |（< 兼顾《》），m 下滑给到最常用的 ?。
 local specs = [
   # 第一行
   { chars: 'q',  swipeUp: '`',  swipeDown: '~' },
@@ -37,7 +37,7 @@ local specs = [
   { chars: 'p',  swipeUp: '=',  swipeDown: '+' },
 
   # 第二行
-  { chars: 'a',  swipeUp: '<',  swipeDown: '?',
+  { chars: 'a',  swipeUp: '<',  swipeDown: '|',
     longPress: [
       { action: { shortcut: '#左手模式' }, systemImageName: 'keyboard.onehanded.left' },
       { action: 'tab', systemImageName: 'arrow.right.to.line', text: 'Tab' },
@@ -56,7 +56,7 @@ local specs = [
   { chars: 'xc', swipeUp: '7',  swipeDown: '&' },
   { chars: 'v',  swipeUp: '8',  swipeDown: '*' },
   { chars: 'bn', swipeUp: '9',  swipeDown: '(' },
-  { chars: 'm',  swipeUp: '0',  swipeDown: '|' },
+  { chars: 'm',  swipeUp: '0',  swipeDown: '?' },
 ];
 
 {
