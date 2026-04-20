@@ -21,14 +21,20 @@
 
   <!-- Title text -->
   <text x="103" y="80" font-family="Noto Sans CJK SC, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif"
-        font-size="52" font-weight="600" fill="#333" dominant-baseline="middle">
+        font-size="44" font-weight="600" fill="#333" dominant-baseline="middle">
     空山素影 - calf 定制版
   </text>
 
   <!-- Version placeholder (replace content during PNG conversion) -->
-  <text id="version" x="893" y="80" font-family="Noto Sans CJK SC, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif"
+  <text id="version" x="893" y="104" font-family="Noto Sans CJK SC, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif"
         font-size="36" font-weight="400" fill="#999" dominant-baseline="middle" text-anchor="end">
     vX.Y
+  </text>
+
+  <!-- Author info -->
+  <text x="103" y="128" font-family="Noto Sans CJK SC, PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif"
+        font-size="26" font-weight="400" fill="#666" dominant-baseline="middle">
+    原作者：罗滋宽 | 修改：calf
   </text>
 
   <!-- Dark image (bottom layer): scaled 790x1718, positioned so visible 548px aligns with clip -->
