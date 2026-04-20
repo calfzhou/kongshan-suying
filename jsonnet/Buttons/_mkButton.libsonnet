@@ -97,6 +97,17 @@
           + [entry],
       },
 
+  # 将 longPress 数组中的每个条目按 expand 简写规则转换为标准 action 对象，
+  # 并在没有任何条目显式标记 selected: true 时，将第一项设为默认选中。
+  # （BasicStyle 默认选中数组中间项；这里覆盖为「默认选中第一项」。）
+  expandLongPress(items)::
+    local expanded = [$.expand(e) for e in items];
+    local hasSelected = std.foldl(
+      function(a, e) a || (std.objectHas(e, 'selected') && e.selected == true),
+      expanded, false);
+    if hasSelected || std.length(expanded) == 0 then expanded
+    else [expanded[0] { selected: true }] + expanded[1:],
+
   # 根据行式 spec 生成完整按键定义（兼容现有 Hamster v3 YAML 结构）
   # spec 支持字段：
   #   chars:      字符串，首字符为主字符；多字符表示同一按键承载多个音
@@ -119,7 +130,7 @@
       if std.objectHas(spec, 'swipeDown') then { swipeDown: $.expand(spec.swipeDown) } else {}
     ) + (
       if std.objectHas(spec, 'longPress') then {
-        longPress: [$.expand(e) for e in spec.longPress],
+        longPress: $.expandLongPress(spec.longPress),
       } else {}
     ), spec, hintsMap, blankUnusedOriginal=true),
   },
@@ -144,7 +155,7 @@
       if std.objectHas(spec, 'swipeDown') then { swipeDown: $.expand(spec.swipeDown) } else {}
     ) + (
       if std.objectHas(spec, 'longPress') then {
-        longPress: [$.expand(e) for e in spec.longPress],
+        longPress: $.expandLongPress(spec.longPress),
       } else {}
     ), spec, hintsMap),
   },
