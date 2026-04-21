@@ -7,20 +7,20 @@ local keyboardLayout = {
     {
       HStack: {
         subviews: [
-          { Cell: toolbarParams.toolbarButton.toolbarHamster3Button.name },
-          { Cell: toolbarParams.toolbarButton.toolbarKeyboardDefinition.name },
-          { Cell: toolbarParams.toolbarButton.toolbarFeedbackButton.name },
-          { Cell: toolbarParams.toolbarButton.toolbarCheckUpdateButton.name },
+          { Cell: toolbarParams.toolbarButton.toolbarRimeSyncButton.name },
+          { Cell: toolbarParams.toolbarButton.toolbarRimeDeployButton.name },
+          { Cell: toolbarParams.toolbarButton.toolbarSchemaSelectorButton.name },
+          { Cell: toolbarParams.toolbarButton.toolbarRimeSwitcherButton.name },
         ],
       },
     },
     {
       HStack: {
         subviews: [
-          { Cell: toolbarParams.toolbarButton.toolbarSkinButton.name },
-          { Cell: toolbarParams.toolbarButton.toolbarSkinPreference.name },
-          { Cell: toolbarParams.toolbarButton.toolbarRimeSyncButton.name },
+          { Cell: toolbarParams.toolbarButton.toolbarFeedbackButton.name },
           { Cell: toolbarParams.toolbarButton.toolbarToggleEmbeddedButton.name },
+          { Cell: toolbarParams.toolbarButton.toolbarHamster3Button.name },
+          { Cell: toolbarParams.toolbarButton.toolbarCheckUpdateButton.name },
         ],
       },
     },
@@ -40,14 +40,14 @@ local newKeyLayout(isDark=false, isPortrait=false) =
   + std.foldl(function(acc, button) acc +
       basicStyle.newFloatingKeyboardButton(button.name, isDark, button.params),
       [
-        toolbarParams.toolbarButton.toolbarHamster3Button,
-        toolbarParams.toolbarButton.toolbarKeyboardDefinition,
-        toolbarParams.toolbarButton.toolbarFeedbackButton,
-        toolbarParams.toolbarButton.toolbarCheckUpdateButton,
-        toolbarParams.toolbarButton.toolbarSkinButton,
-        toolbarParams.toolbarButton.toolbarSkinPreference,
         toolbarParams.toolbarButton.toolbarRimeSyncButton,
+        toolbarParams.toolbarButton.toolbarRimeDeployButton,
+        toolbarParams.toolbarButton.toolbarSchemaSelectorButton,
+        toolbarParams.toolbarButton.toolbarRimeSwitcherButton,
+        toolbarParams.toolbarButton.toolbarFeedbackButton,
         toolbarParams.toolbarButton.toolbarToggleEmbeddedButton,
+        toolbarParams.toolbarButton.toolbarHamster3Button,
+        toolbarParams.toolbarButton.toolbarCheckUpdateButton,
       ],
       {});
 
