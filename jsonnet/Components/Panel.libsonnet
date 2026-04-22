@@ -9,8 +9,8 @@ local keyboardLayout = {
         subviews: [
           { Cell: toolbarParams.toolbarButton.toolbarRimeSyncButton.name },
           { Cell: toolbarParams.toolbarButton.toolbarRimeDeployButton.name },
-          { Cell: toolbarParams.toolbarButton.toolbarSchemaSelectorButton.name },
           { Cell: toolbarParams.toolbarButton.toolbarRimeSwitcherButton.name },
+          { Cell: toolbarParams.toolbarButton.toolbarSkinPreference.name },
         ],
       },
     },
@@ -42,8 +42,8 @@ local newKeyLayout(isDark=false, isPortrait=false) =
       [
         toolbarParams.toolbarButton.toolbarRimeSyncButton,
         toolbarParams.toolbarButton.toolbarRimeDeployButton,
-        toolbarParams.toolbarButton.toolbarSchemaSelectorButton,
         toolbarParams.toolbarButton.toolbarRimeSwitcherButton,
+        toolbarParams.toolbarButton.toolbarSkinPreference,
         toolbarParams.toolbarButton.toolbarFeedbackButton,
         toolbarParams.toolbarButton.toolbarToggleEmbeddedButton,
         toolbarParams.toolbarButton.toolbarHamster3Button,
