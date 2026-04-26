@@ -89,7 +89,7 @@ local settings = import '../Settings.libsonnet';
       highlightSystemImageName: 'delete.left.fill',
 
       whenPreeditChanged: {
-        swipeUp: { action: { shortcut: '#重输' }, text: 'esc' },
+        swipeUp: { action: { sendKeys: 'Control+Backspace' }, text: '退音' },
       },
     },
   },
