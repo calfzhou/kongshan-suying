@@ -115,6 +115,7 @@ local getAlphabeticButtonSize(name) =
 
 local newKeyLayout(isDark=false, isPortrait=true, keyboardType=KeyboardType.Chinese) =
   local isAlphabetic = keyboardType == KeyboardType.English;
+  local insets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
   # 仅在非英文模式下，且用户未自定义 shift swipeUp 时，注入"显示助记"触发
   local shiftParams =
     if doublePinyinHints != null && !isAlphabetic && !std.objectHas(commonButtons.shiftButton.params, 'swipeUp') then
@@ -136,6 +137,7 @@ local newKeyLayout(isDark=false, isPortrait=true, keyboardType=KeyboardType.Chin
         isDark,
         getAlphabeticButtonSize(button.name) +
         utils.processButtonParams(isAlphabetic, button.params) + basicStyle.hintStyleSize + basicStyle.textCenterWhenShowSwipeText +
+        { insets: insets, useColorfulBackground: true } +
         (
           if keyboardType != KeyboardType.English && settings.uppercaseForChinese then
             basicStyle.newAlphabeticButtonUppercaseForegroundStyle(isDark, button.params) + basicStyle.getKeyboardActionText(button.params.uppercased)

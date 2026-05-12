@@ -107,6 +107,8 @@ local getButtonSize(name) =
 
 local newKeyLayout(isDark=false, isPortrait=false, keyboardType=KeyboardType.Chinese) =
   local isAlphabetic = keyboardType == KeyboardType.English;
+  local insets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
+  local letterExtras = { insets: insets, useColorfulBackground: true };
   {
     keyboardHeight: if isPortrait then commonButtons.keyboardHeight.portrait else commonButtons.keyboardHeight.landscape,
     keyboardStyle: utils.newBackgroundStyle(style=basicStyle.keyboardBackgroundStyleName),
@@ -122,6 +124,7 @@ local newKeyLayout(isDark=false, isPortrait=false, keyboardType=KeyboardType.Chi
           fontSize: fonts.numericButtonTextFontSize,
         }
         + utils.processButtonParams(isAlphabetic, button.params) + basicStyle.hintStyleSize
+        + letterExtras
         + (
           if utils.numericActionNeedSymbol(settings.keyboardLayout) then
           {
@@ -142,6 +145,7 @@ local newKeyLayout(isDark=false, isPortrait=false, keyboardType=KeyboardType.Chi
         isDark,
         getButtonSize(button.name)
         + utils.processButtonParams(isAlphabetic, button.params) + basicStyle.hintStyleSize
+        + letterExtras
       ),
     [
       numericButtons.hyphenButton,

@@ -103,17 +103,42 @@ local newButtonAnimation() = {
 };
 
 // 字母键按钮背景样式
+//
+// 当 colors.standardButtonCustomBackgroundColor 存在（buttonColorTheme = 'colorful'）时，
+// 根据 params.action.character 在 custom map 中查表上色；查不到时回退到 default，
+// custom map 不存在（plain 主题）时直接使用统一的 standardButtonBackgroundColor。
+local getAlphabeticButtonNormalColor(params) =
+  local custom = colors.standardButtonCustomBackgroundColor;
+  if custom == null then colors.standardButtonBackgroundColor
+  else
+    local action = if std.objectHas(params, 'action') then params.action else null;
+    local char = if std.isObject(action) then (
+      if std.objectHas(action, 'character') then action.character
+      else if std.objectHas(action, 'symbol') then action.symbol
+      else null
+    ) else null;
+    if char != null && std.objectHas(custom, char) then custom[char]
+    else if std.objectHas(custom, 'default') then custom.default
+    else colors.standardButtonBackgroundColor;
+
 local alphabeticButtonBackgroundStyleName = 'alphabeticButtonBackgroundStyle';
 local newAlphabeticButtonBackgroundStyle(isDark=false, params={}) =
-  assert std.objectHas(params, 'insets') : '必须提供 insets 参数';
+  # 注：以前这里 assert insets 必须提供。从启用 colorful 主题（per-letter 背景样式）后，
+  # AddBackgroundStyle 会以 button 自身 params 调用本函数，此时 insets 由布局通过
+  # button params 注入；若仍未提供，则 Hamster 会沿用默认值。
+  #
+  # params 在写顺序上排在自定义键值前，是为了让本函数的颜色字段（normalColor 等）
+  # 覆盖 params 里可能存在的「文字色」（部分布局会把 ForegroundStyle 块 mergePatch 进 params）。
+  # useColorfulBackground 是 colorful 路径的开关标记，不应进入最终样式块。
+  local cleanedParams = utils.excludeProperties(params, ['useColorfulBackground']);
 {
-  [alphabeticButtonBackgroundStyleName]: utils.newGeometryStyle({
-    normalColor: colors.standardButtonBackgroundColor,
+  [alphabeticButtonBackgroundStyleName]: utils.newGeometryStyle(cleanedParams + {
+    normalColor: getAlphabeticButtonNormalColor(params),
     highlightColor: colors.standardButtonHighlightedBackgroundColor,
     cornerRadius: buttonCornerRadius,
     normalLowerEdgeColor: colors.lowerEdgeOfButtonNormalColor,
     highlightLowerEdgeColor: colors.lowerEdgeOfButtonHighlightColor,
-  } + params, isDark),
+  }, isDark),
 };
 
 // 字母键按钮前景样式
@@ -426,17 +451,45 @@ local newButton(name, type='alphabetic', isDark=false, params={}) =
   AddBackgroundStyle():
     local hasBackgroundName = std.objectHas(root.params, 'backgroundStyleName');
     local hasBackgroundStyle = std.objectHas(root.params, 'backgroundStyle');
+    # 当字母键启用了 colorful 主题，且 button 显式带上 useColorfulBackground=true 的标记
+    # （由拼音布局在创建按键时注入），同时该字符在 colorful 配色表中存在条目时，才单独生成
+    # per-letter 背景样式块；否则保持原有共享样式行为，避免影响数字键、十六进制键等。
+    local action = if std.objectHas(root.params, 'action') then root.params.action else null;
+    local actionChar =
+      if std.isObject(action) then (
+        if std.objectHas(action, 'character') then action.character
+        else if std.objectHas(action, 'symbol') then action.symbol
+        else null
+      ) else null;
+    local custom = colors.standardButtonCustomBackgroundColor;
+    local optedIn =
+      std.objectHas(root.params, 'useColorfulBackground')
+      && root.params.useColorfulBackground == true;
+    local useCustomAlphabeticBg =
+      !hasBackgroundName && !hasBackgroundStyle
+      && root.type == 'alphabetic'
+      && custom != null
+      && optedIn
+      && actionChar != null
+      && std.objectHas(custom, actionChar)
+      && actionChar != 'default';
+    local customAlphabeticBgName = root.name + 'BackgroundStyle';
   root {
     [root.name]+:
       if hasBackgroundName then
         assert std.type(root.params.backgroundStyleName) == 'string' : 'backgroundStyleName 必须是字符串，当前为' + root.params.backgroundStyleName;
         { backgroundStyle: root.params.backgroundStyleName }
+      else if useCustomAlphabeticBg then
+        { backgroundStyle: customAlphabeticBgName }
       else
         { backgroundStyle: root.type + 'ButtonBackgroundStyle' },
     reference+:
       if hasBackgroundStyle then
         assert std.type(root.params.backgroundStyle) == 'object' : 'backgroundStyle 必须是一个对象，当前为' + root.params.backgroundStyle;
         root.params.backgroundStyle
+      else if useCustomAlphabeticBg then
+        local bgObj = newAlphabeticButtonBackgroundStyle(root.isDark, root.params);
+        { [customAlphabeticBgName]: bgObj[alphabeticButtonBackgroundStyleName] }
       else {}
   },
 

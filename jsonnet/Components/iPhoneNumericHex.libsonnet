@@ -100,6 +100,7 @@ local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
           fontSize: fonts.numericButtonTextFontSize,
         }
         + button.params + basicStyle.hintStyleSize
+        + extraParams + { useColorfulBackground: true }
         + (
           if utils.numericActionNeedSymbol(settings.keyboardLayout) then
           {

@@ -61,6 +61,7 @@ local keyboardLayout = {
 };
 
 local newKeyLayout(isDark=false, isPortrait=true) =
+  local insets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
   {
     keyboardHeight: if isPortrait then commonButtons.keyboardHeight.portrait else commonButtons.keyboardHeight.landscape,
     keyboardStyle: utils.newBackgroundStyle(style=basicStyle.keyboardBackgroundStyleName),
@@ -73,7 +74,8 @@ local newKeyLayout(isDark=false, isPortrait=true) =
       basicStyle.newAlphabeticButton(
         button.name,
         isDark,
-        button.params + basicStyle.hintStyleSize + basicStyle.textCenterWhenShowSwipeText),
+        button.params + basicStyle.hintStyleSize + basicStyle.textCenterWhenShowSwipeText
+        + { insets: insets, useColorfulBackground: true }),
       buttons.letterButtons,
       {})
 

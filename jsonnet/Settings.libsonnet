@@ -104,6 +104,12 @@
   preferIcon: true,
 
 
+  # 字母键背景配色
+  # 'plain'    : 字母键统一为白/灰底（与原版一致，简约）
+  # 'colorful' : 字母 / 数字 / 符号键按行 / 位置上色（默认）
+  buttonColorTheme: 'colorful',
+
+
   # 主题色
   # 0-无  1-红色  2-绿色  3-橙色  4-蓝色  5-紫色
   accentColor: 4,

@@ -175,7 +175,7 @@ local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
         isDark,
         basicStyle.textCenterWhenShowSwipeText + {
           fontSize: fonts.t9ButtonTextFontSize,
-        } + button.params + (
+        } + button.params + extraParams + { useColorfulBackground: true } + (
           if settings.uppercaseForChinese then
             { text: std.asciiUpper(button.params.text) }
           else {}

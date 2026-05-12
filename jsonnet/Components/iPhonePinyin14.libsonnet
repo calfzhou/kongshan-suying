@@ -67,6 +67,7 @@ local keyboardLayout = {
 };
 
 local newKeyLayout(isDark=false, isPortrait=true) =
+  local insets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
   {
     keyboardHeight: if isPortrait then commonButtons.keyboardHeight.portrait else commonButtons.keyboardHeight.landscape,
     keyboardStyle: utils.newBackgroundStyle(style=basicStyle.keyboardBackgroundStyleName),
@@ -80,6 +81,7 @@ local newKeyLayout(isDark=false, isPortrait=true) =
         button.name,
         isDark,
         basicStyle.hintStyleSize + basicStyle.textCenterWhenShowSwipeText + button.params +
+        { insets: insets, useColorfulBackground: true } +
         {
           [if settings.uppercaseForChinese then 'text']: std.asciiUpper(button.params.text)
         }),
