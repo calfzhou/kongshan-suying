@@ -42,6 +42,7 @@
 - **行式按键定义语法**：`jsonnet/Buttons/Layout*.libsonnet` 中各布局采用一行一键的紧凑写法，便于快速调整某个键的字符 / 上下划 / 长按行为，详见 `_mkButton.libsonnet` 顶部注释。
 - **工具栏滑动按钮**默认精简为 符号键盘 / 表情键盘 / 右手模式 三项；其余功能改由浮动面板提供。
 - **浮动面板**默认布局：第一行为 同步 / 部署 / 开关 / 微调（Rime 与皮肤维护），第二行为 震动 / 内嵌 / 元书 / 更新（应用层开关与入口）。
+- **彩色按键背景（colorful 主题）**：默认开启，字母 / 数字 / 常用符号键按行 / 位置上色，元音类用暖橙、特殊键 q/f 红粉、w/j 橙黄、其余按位置铺陈中性色；数字 0-9 与 QWERTY 物理键盘上对应字母同色（1↔q, 2↔w, …, 9↔p, 0↔y），横向数字键盘的常用符号也借用相邻字母色。可在 `Settings.libsonnet` 的 `buttonColorTheme` 字段切换 `plain`（统一白/灰底，与原版一致）。配色取自 [community/colorful-by-jiong](https://github.com/luozikuan/kongshan-suying/tree/community/colorful-by-jiong) 分支。
 
 ## 维护范围说明
 
