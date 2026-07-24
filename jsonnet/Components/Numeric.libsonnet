@@ -1,7 +1,7 @@
 local settings = import '../Settings.libsonnet';
-local numeric9 = import 'iPhoneNumeric9.libsonnet';
-local numericRow = import 'iPhoneNumericRow.libsonnet';
-local numericHex = import 'iPhoneNumericHex.libsonnet';
+local numeric9 = import './Numeric/Numeric9.libsonnet';
+local numericRow = import './Numeric/NumericRow.libsonnet';
+local numericHex = import './Numeric/NumericHex.libsonnet';
 
 {
   new(isDark, isPortrait):

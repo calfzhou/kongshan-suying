@@ -1,11 +1,11 @@
 local settings = import '../Settings.libsonnet';
-local layout9  = import 'iPhonePinyin9.libsonnet';
-local layout14 = import 'iPhonePinyin14.libsonnet';
-local layout17 = import 'iPhonePinyin17.libsonnet';
-local layout18 = import 'iPhonePinyin18.libsonnet';
-local layout26 = import 'iPhonePinyin26.libsonnet';
-local layoutBopomofo = import 'iPhoneBopomofo.libsonnet';
-local layoutSigma = import 'iPhonePinyinSigma.libsonnet';
+local layout9  = import './Pinyin/Pinyin9.libsonnet';
+local layout14 = import './Pinyin/Pinyin14.libsonnet';
+local layout17 = import './Pinyin/Pinyin17.libsonnet';
+local layout18 = import './Pinyin/Pinyin18.libsonnet';
+local layout26 = import './Pinyin/Pinyin26.libsonnet';
+local layoutBopomofo = import './Pinyin/PinyinBopomofo.libsonnet';
+local layoutSigma = import './Pinyin/PinyinSigma.libsonnet';
 
 {
   new(isDark, isPortrait):

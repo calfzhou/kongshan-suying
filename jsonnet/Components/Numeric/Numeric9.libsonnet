@@ -1,11 +1,11 @@
-local numeric9Buttons = import '../Buttons/LayoutNumeric.libsonnet';
-local commonButtons = import '../Buttons/Common.libsonnet';
-local fonts = import '../Constants/Fonts.libsonnet';
-local basicStyle = import 'BasicStyle.libsonnet';
-local preedit = import 'Preedit.libsonnet';
-local toolbar = import 'Toolbar.libsonnet';
-local utils = import 'Utils.libsonnet';
-local settings = import '../Settings.libsonnet';
+local numeric9Buttons = import '../../Buttons/LayoutNumeric.libsonnet';
+local commonButtons = import '../../Buttons/Common.libsonnet';
+local fonts = import '../../Constants/Fonts.libsonnet';
+local basicStyle = import '../../Styles/BasicStyle.libsonnet';
+local preedit = import '../Preedit.libsonnet';
+local toolbar = import '../Toolbar.libsonnet';
+local utils = import '../../Utils/Utils.libsonnet';
+local settings = import '../../Settings.libsonnet';
 
 // 窄 VStack 宽度样式
 local narrowVStackStyle = {
@@ -206,7 +206,7 @@ else
     };
 
     preedit.new(isDark)
-    + toolbar.new(isDark, isPortrait)
+    + toolbar.new(isDark, isPortrait, 'numeric')
     + (
       if !isPortrait then halfVStackStyle.style else {}
     )

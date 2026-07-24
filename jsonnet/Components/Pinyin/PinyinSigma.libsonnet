@@ -1,11 +1,11 @@
-local buttons = import '../Buttons/LayoutSigma.libsonnet';
-local commonButtons = import '../Buttons/Common.libsonnet';
-local toolbarParams = import '../Buttons/Toolbar.libsonnet';
-local settings = import '../Settings.libsonnet';
-local basicStyle = import 'BasicStyle.libsonnet';
-local preedit = import 'Preedit.libsonnet';
-local toolbar = import 'Toolbar.libsonnet';
-local utils = import 'Utils.libsonnet';
+local buttons = import '../../Buttons/LayoutSigma.libsonnet';
+local commonButtons = import '../../Buttons/Common.libsonnet';
+local toolbarParams = import '../../Buttons/Toolbar.libsonnet';
+local settings = import '../../Settings.libsonnet';
+local basicStyle = import '../../Styles/BasicStyle.libsonnet';
+local preedit = import '../Preedit.libsonnet';
+local toolbar = import '../Toolbar.libsonnet';
+local utils = import '../../Utils/Utils.libsonnet';
 
 local firstRowStyle = {
   local this = self,
@@ -97,7 +97,7 @@ local keyboardLayout = {
         style: fourthRowStyle.name,
         subviews: [
           { Cell: commonButtons.enterButton.name },
-          { Cell: commonButtons.commaButton.name },
+          { Cell: buttons.commaButton.name },
           { Cell: commonButtons.spaceButton.name },
           { Cell: buttons.alphabeticButton.name },
           { Cell: commonButtons.backspaceButton.name },
@@ -206,7 +206,7 @@ else
     };
 
     preedit.new(isDark)
-    + toolbar.new(isDark, isPortrait)
+    + toolbar.new(isDark, isPortrait, 'pinyin')
     + firstRowStyle.style
     + secondRowStyle.style
     + thirdRowStyle.style
@@ -222,5 +222,4 @@ else
     + newKeyLayout(isDark, isPortrait)
     // Notifications
     + basicStyle.rimeSchemaChangedNotification
-    + basicStyle.returnKeyTypeChangedNotification,
 }

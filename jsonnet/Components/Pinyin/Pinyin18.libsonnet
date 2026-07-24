@@ -1,14 +1,14 @@
-local buttons = import '../Buttons/Layout18.libsonnet';
-local commonButtons = import '../Buttons/Common.libsonnet';
-local mk = import '../Buttons/_mkButton.libsonnet';
-local toolbarParams = import '../Buttons/Toolbar.libsonnet';
-local settings = import '../Settings.libsonnet';
-local basicStyle = import 'BasicStyle.libsonnet';
-local preedit = import 'Preedit.libsonnet';
-local toolbar = import 'Toolbar.libsonnet';
-local utils = import 'Utils.libsonnet';
+local buttons = import '../../Buttons/Layout18.libsonnet';
+local commonButtons = import '../../Buttons/Common.libsonnet';
+local mk = import '../../Buttons/_mkButton.libsonnet';
+local toolbarParams = import '../../Buttons/Toolbar.libsonnet';
+local settings = import '../../Settings.libsonnet';
+local basicStyle = import '../../Styles/BasicStyle.libsonnet';
+local preedit = import '../Preedit.libsonnet';
+local toolbar = import '../Toolbar.libsonnet';
+local utils = import '../../Utils/Utils.libsonnet';
 
-local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
+local doublePinyinHints = (import '../../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
 local shiftParams =
   if doublePinyinHints != null && !std.objectHas(commonButtons.shiftButton.params, 'swipeUp') then
     commonButtons.shiftButton.params + {
@@ -171,7 +171,7 @@ local newKeyLayout(isDark=false, isPortrait=true) =
     };
 
     preedit.new(isDark)
-    + toolbar.new(isDark, isPortrait)
+    + toolbar.new(isDark, isPortrait, 'pinyin')
     + basicStyle.newKeyboardBackgroundStyle(isDark)
     + basicStyle.newAlphabeticButtonBackgroundStyle(isDark, extraParams)
     + basicStyle.newSystemButtonBackgroundStyle(isDark, extraParams)
@@ -183,5 +183,4 @@ local newKeyLayout(isDark=false, isPortrait=true) =
     + newKeyLayout(isDark, isPortrait)
     // Notifications
     + basicStyle.rimeSchemaChangedNotification
-    + basicStyle.returnKeyTypeChangedNotification,
 }

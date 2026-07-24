@@ -34,6 +34,13 @@
   numericLayout: 'hex',
 
 
+  # 符号键盘布局选择，可选值如下：
+  # default : 元书自带的符号键盘
+  # row : 行式符号布局
+  # classified : 分类符号布局
+  symbolicLayout: 'default',
+
+
   # 输入时空格键上的内容，支持固定内容和变量
   # 注意：bopomofo 佈局下此項不生效，因為空格鍵打字中用於選聲調（一聲）
   # 变量可选如下：

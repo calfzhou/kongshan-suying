@@ -1,11 +1,11 @@
-local numericButtons = import '../Buttons/LayoutNumeric.libsonnet';
-local commonButtons = import '../Buttons/Common.libsonnet';
-local fonts = import '../Constants/Fonts.libsonnet';
-local basicStyle = import 'BasicStyle.libsonnet';
-local preedit = import 'Preedit.libsonnet';
-local toolbar = import 'Toolbar.libsonnet';
-local utils = import 'Utils.libsonnet';
-local settings = import '../Settings.libsonnet';
+local numericButtons = import '../../Buttons/LayoutNumeric.libsonnet';
+local commonButtons = import '../../Buttons/Common.libsonnet';
+local fonts = import '../../Constants/Fonts.libsonnet';
+local basicStyle = import '../../Styles/BasicStyle.libsonnet';
+local preedit = import '../Preedit.libsonnet';
+local toolbar = import '../Toolbar.libsonnet';
+local utils = import '../../Utils/Utils.libsonnet';
+local settings = import '../../Settings.libsonnet';
 
 local portraitNormalButtonSize = {
   size: { width: '112.5/1125' },
@@ -152,16 +152,27 @@ local newKeyLayout(isDark=false, isPortrait=false, extraParams={}) =
         }
       ));
 
+local backgroundInsets = if !settings.iPad then
+{
+  portrait: { top: 3, left: 3, bottom: 3, right: 3 },
+  landscape: { top: 2, left: 3, bottom: 2, right: 3 },
+}
+else
+{
+  portrait: { top: 3, left: 3, bottom: 3, right: 3 },
+  landscape: { top: 4, left: 6, bottom: 4, right: 6 },
+};
+
 {
   new(isDark, isPortrait):
-    local insets = if isPortrait then commonButtons.backgroundInsets.portrait else commonButtons.backgroundInsets.landscape;
+    local insets = if isPortrait then backgroundInsets.portrait else backgroundInsets.landscape;
 
     local extraParams = {
       insets: insets,
     };
 
     preedit.new(isDark)
-    + toolbar.new(isDark, isPortrait)
+    + toolbar.new(isDark, isPortrait, 'numeric')
     + basicStyle.newKeyboardBackgroundStyle(isDark)
     + basicStyle.newAlphabeticButtonBackgroundStyle(isDark, extraParams)
     + basicStyle.newSystemButtonBackgroundStyle(isDark, extraParams)
