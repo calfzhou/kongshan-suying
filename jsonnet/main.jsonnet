@@ -1,18 +1,24 @@
-local iPhonePinyin = import 'Components/iPhonePinyin.libsonnet';
-local temp26KeyLayout = import 'Components/Temp26KeyLayout.libsonnet';
-local iPhoneAlphabetic = import 'Components/iPhoneAlphabetic.libsonnet';
-local iPhoneNumeric = import 'Components/iPhoneNumeric.libsonnet';
-local iPhoneNumericRowEn = import 'Components/iPhoneNumericRowEn.libsonnet';
-local panel = import 'Components/Panel.libsonnet';
+local pinyinComponent = import 'Components/Pinyin.libsonnet';
+local temp26Component = import 'Components/Pinyin/PinyinTemp26.libsonnet';
+local alphabeticComponent = import 'Components/Alphabetic.libsonnet';
+local numericComponent = import 'Components/Numeric.libsonnet';
+local numericRowEnComponent = import 'Components/Numeric/NumericRowEn.libsonnet';
+local symbolicComponent = import 'Components/Symbolic.libsonnet';
+local symbolicRowEnComponent = import 'Components/Symbolic/SymbolicRowEn.libsonnet';
+local panelComponent = import 'Components/Panel.libsonnet';
 local settings = import 'Settings.libsonnet';
 
 local nameToComponent = {
-  pinyin: iPhonePinyin,
-  alphabetic: iPhoneAlphabetic,
-  numeric: iPhoneNumeric,
-  panel: panel,
-  [if !std.startsWith(settings.keyboardLayout, '26') then 'temp26Key']: temp26KeyLayout,
-  [if settings.numericLayout == 'row' then 'numericRowEn']: iPhoneNumericRowEn,
+  pinyin: pinyinComponent,
+  alphabetic: alphabeticComponent,
+  numeric: numericComponent,
+  panel: panelComponent,
+  [if settings.symbolicLayout != 'default' then 'symbolic']: symbolicComponent,
+
+   // 这几个组件只有在特定条件下才会被使用
+  [if !std.startsWith(settings.keyboardLayout, '26') then 'temp26Key']: temp26Component,
+  [if settings.numericLayout == 'row' then 'numericRowEn']: numericRowEnComponent,
+  [if settings.symbolicLayout == 'row' then 'symbolicRowEn']: symbolicRowEnComponent,
 };
 
 local getFileName(componentName, isPortrait) =

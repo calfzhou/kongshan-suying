@@ -117,12 +117,12 @@ shiftButton: {
 },
 ```
 
-### whenAlphabetic 当切换到英文键盘时的配置
+### OnAlphabetic 当切换到英文键盘时的配置
 注意此选项只能在两个场景使用：
 1. 26 键布局的按键中使用，这些按键大部分位于 `jsonnet/Buttons/Layout26.libsonnet` 文件中，少部分位于 `jsonnet/Buttons/Common.libsonnet` 文件中。
 2. 英文键盘切到行式数字键盘(row)时使用，这些按键位于 `jsonnet/Buttons/LayoutNumeric.libsonnet` 文件中。
 
-`whenAlphabetic` 可以用来配置按键在切换到英文键盘（或英文行式数字键盘）时的显示和行为，例如逗号键，在中文键盘下显示中文逗号，在英文键盘下显示英文逗号，写法如下：
+`OnAlphabetic` 可以用来配置按键在切换到英文键盘（或英文行式数字键盘）时的显示和行为，例如逗号键，在中文键盘下显示中文逗号，在英文键盘下显示英文逗号，写法如下：
 
 ```jsonnet
 commaButton: {
@@ -138,7 +138,7 @@ commaButton: {
       center: { y: 0.3 }
     },
 
-    whenAlphabetic: {
+    OnAlphabetic: {
       text: ',', center: { y: 0.48 },
       swipeUp: { text: '.', center: { y: 0.28 } },
     }
@@ -156,7 +156,7 @@ moneyButton: {
     action: { character: '$' },
     text: '¥',
 
-    whenAlphabetic: {
+    OnAlphabetic: {
       text: '$',
     },
   },

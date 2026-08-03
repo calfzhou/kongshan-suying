@@ -251,6 +251,16 @@ local settings = import '../Settings.libsonnet';
         action: { keyboardType: 'numeric', },
         systemImageName: 'textformat.123',
         text: '数字',
+
+        OnNumeric: {
+          action: 'returnPrimaryKeyboard',
+          systemImageName: 'arrow.backward',
+          text: '返回',
+        },
+
+		OnAlphabetic: {
+		  [if settings.numericLayout == 'row' then 'action']: { keyboardType: 'numericRowEn' },
+		}
       },
     },
     toolbarKeyboardSymbolicButton: {
@@ -259,6 +269,15 @@ local settings = import '../Settings.libsonnet';
         action: { keyboardType: 'symbolic', },
         systemImageName: 'number',
         text: '符号',
+
+        OnSymbolic: {
+          action: 'returnPrimaryKeyboard',
+          systemImageName: 'arrow.backward',
+          text: '返回',
+        },
+		OnAlphabetic: {
+		  [if settings.symbolicLayout == 'row' then 'action']: { keyboardType: 'symbolicRowEn' },
+		},
       },
     },
     toolbarKeyboardEmojiButton: {
@@ -268,6 +287,12 @@ local settings = import '../Settings.libsonnet';
 		// systemImageName: 'face.smiling.inverse', // 这个表情经常会异常反色
         systemImageName: 'face.dashed',
         text: '表情',
+
+        OnEmojis: {
+          action: 'returnPrimaryKeyboard',
+          systemImageName: 'arrow.backward',
+          text: '返回',
+        }
       },
     },
     toolbarSelectAllTextButton: {

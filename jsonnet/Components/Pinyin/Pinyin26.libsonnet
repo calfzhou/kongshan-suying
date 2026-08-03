@@ -1,14 +1,14 @@
-local buttons = import '../Buttons/Layout26.libsonnet';
-local commonButtons = import '../Buttons/Common.libsonnet';
-local mk = import '../Buttons/_mkButton.libsonnet';
-local toolbarParams = import '../Buttons/Toolbar.libsonnet';
-local settings = import '../Settings.libsonnet';
-local basicStyle = import 'BasicStyle.libsonnet';
-local preedit = import 'Preedit.libsonnet';
-local toolbar = import 'Toolbar.libsonnet';
-local utils = import 'Utils.libsonnet';
+local buttons = import '../../Buttons/Layout26.libsonnet';
+local commonButtons = import '../../Buttons/Common.libsonnet';
+local mk = import '../../Buttons/_mkButton.libsonnet';
+local toolbarParams = import '../../Buttons/Toolbar.libsonnet';
+local settings = import '../../Settings.libsonnet';
+local basicStyle = import '../../Styles/BasicStyle.libsonnet';
+local preedit = import '../Preedit.libsonnet';
+local toolbar = import '../Toolbar.libsonnet';
+local utils = import '../../Utils/Utils.libsonnet';
 
-local doublePinyinHints = (import '../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
+local doublePinyinHints = (import '../../Constants/DoublePinyinHints.libsonnet').getHints(settings.doublePinyinHints);
 
 local portraitNormalButtonSize = {
   size: { width: '112.5/1125' },
@@ -187,13 +187,6 @@ local newKeyLayout(isDark=false, isPortrait=true, keyboardType=KeyboardType.Chin
     isDark,
     { size: { width: '225/1125' } }
     + utils.processButtonParams(isAlphabetic, commonButtons.numericButton.params)
-    + (
-	  // 对于英文键盘，如果数字键盘是 row 形式，那么切到 numericRowEn 键盘
-	  // numericRowEn 键盘经过特殊处理，上面的符号都是用 symbol 直接上屏的
-      if isAlphabetic && settings.numericLayout == 'row' then
-        { action: { keyboardType: 'numericRowEn' } }
-      else {}
-    )
   )
 
   + basicStyle.newAlphabeticButton(
@@ -248,7 +241,7 @@ local newKeyLayout(isDark=false, isPortrait=true, keyboardType=KeyboardType.Chin
     };
 
     preedit.new(isDark)
-    + toolbar.new(isDark, isPortrait)
+    + toolbar.new(isDark, isPortrait, if keyboardType == KeyboardType.Chinese then 'pinyin' else 'alphabetic')
     + basicStyle.newKeyboardBackgroundStyle(isDark)
     + basicStyle.newAlphabeticButtonBackgroundStyle(isDark, extraParams)
     + basicStyle.newSystemButtonBackgroundStyle(isDark, extraParams)
@@ -260,5 +253,4 @@ local newKeyLayout(isDark=false, isPortrait=true, keyboardType=KeyboardType.Chin
     + newKeyLayout(isDark, isPortrait, keyboardType)
     // Notifications
     + basicStyle.rimeSchemaChangedNotification
-    + basicStyle.returnKeyTypeChangedNotification,
 }

@@ -1,11 +1,11 @@
-local buttons = import '../Buttons/LayoutBopomofo.libsonnet';
-local commonButtons = import '../Buttons/Common.libsonnet';
-local toolbarParams = import '../Buttons/Toolbar.libsonnet';
-local settings = import '../Settings.libsonnet';
-local basicStyle = import 'BasicStyle.libsonnet';
-local preedit = import 'Preedit.libsonnet';
-local toolbar = import 'Toolbar.libsonnet';
-local utils = import 'Utils.libsonnet';
+local buttons = import '../../Buttons/LayoutBopomofo.libsonnet';
+local commonButtons = import '../../Buttons/Common.libsonnet';
+local toolbarParams = import '../../Buttons/Toolbar.libsonnet';
+local settings = import '../../Settings.libsonnet';
+local basicStyle = import '../../Styles/BasicStyle.libsonnet';
+local preedit = import '../Preedit.libsonnet';
+local toolbar = import '../Toolbar.libsonnet';
+local utils = import '../../Utils/Utils.libsonnet';
 
 local portraitNormalButtonSize = {
   size: { width: '3/33' },
@@ -207,7 +207,7 @@ else
     };
 
     preedit.new(isDark)
-    + toolbar.new(isDark, isPortrait)
+    + toolbar.new(isDark, isPortrait, 'pinyin')
     + basicStyle.newKeyboardBackgroundStyle(isDark)
     + basicStyle.newAlphabeticButtonBackgroundStyle(isDark, extraParams)
     + basicStyle.newSystemButtonBackgroundStyle(isDark, extraParams)
@@ -219,5 +219,4 @@ else
     + newKeyLayout(isDark, isPortrait)
     // Notifications
     + basicStyle.rimeSchemaChangedNotification
-    + basicStyle.returnKeyTypeChangedNotification,
 }

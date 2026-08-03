@@ -171,7 +171,7 @@ local settings = import '../Settings.libsonnet';
       action: { character: ':' },
       text: '：',
 
-      whenAlphabetic: {
+      OnAlphabetic: {
         text: ':',
       },
     },
@@ -184,7 +184,7 @@ local settings = import '../Settings.libsonnet';
       action: { character: ';' },
       text: '；',
 
-      whenAlphabetic: {
+      OnAlphabetic: {
         text: ';',
       },
     },
@@ -213,7 +213,7 @@ local settings = import '../Settings.libsonnet';
       action: { character: '$' },
       text: '¥',
 
-      whenAlphabetic: {
+      OnAlphabetic: {
         text: '$',
       },
     },
@@ -233,7 +233,7 @@ local settings = import '../Settings.libsonnet';
     params: {
       action: { symbol: '“' },
 
-      whenAlphabetic: {
+      OnAlphabetic: {
         action: { symbol: "'" },
       },
     },
@@ -244,7 +244,7 @@ local settings = import '../Settings.libsonnet';
     params: {
       action: { symbol: '”' },
 
-      whenAlphabetic: {
+      OnAlphabetic: {
         action: { symbol: '"' },
       },
     },
@@ -270,7 +270,7 @@ local settings = import '../Settings.libsonnet';
     params: {
       action: { symbol: '。' },
 
-      whenAlphabetic: {
+      OnAlphabetic: {
         action: { symbol: '&' },
       }
     },
@@ -282,7 +282,7 @@ local settings = import '../Settings.libsonnet';
     params: {
       action: { symbol: '、' },
 
-      whenAlphabetic: {
+      OnAlphabetic: {
         action: { symbol: '\\' },
       },
     },

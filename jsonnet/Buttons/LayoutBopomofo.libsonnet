@@ -347,7 +347,7 @@ local commonButtons = import './Common.libsonnet';
         { action: { symbol: '……' } },
       ],
 
-      whenAlphabetic: {
+      OnAlphabetic: {
         text: ',', center: { y: 0.48 },
         swipeUp: { text: '.', center: { y: 0.28 } },
       },
